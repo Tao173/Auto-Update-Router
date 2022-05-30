@@ -36,8 +36,102 @@ env:
   PRODUCT_NAME: Just_For_Test
 
 jobs:
-  buildtwo:
+  189cloudgo:
     runs-on: ubuntu-20.04
+    outputs:
+      output: ${{ steps.step.outputs.189cloudgo }}      
+    steps:
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        Author=$(git show -s --date=short --format="Author: %an")
+        Date=$(git show -s --date=short --format="date: %cd")
+        Commit=$(git show -s --date=short --format="commit: %s")
+        Hash=$(git show -s --date=short --format="commit hash: %h")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "author=$Author" >> $GITHUB_ENV
+        echo "date=$Date" >> $GITHUB_ENV
+        echo "commit=$Commit" >> $GITHUB_ENV
+        echo "hash=$Hash" >> $GITHUB_ENV
+        echo "DATEA=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        echo "nametag=${{ github.event.inputs.upload }}" >> $GITHUB_ENV
+  
+    - name: Release Downloader ARMv8_Plus_Myself
+      if: (github.event.inputs.upload != 'root') 
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "Tao173/Auto-Update-Router"
+        out-file-path: "./Download"
+        tag: "ARMv8_Plus_Myself"
+        fileName: "*"
+
+    - name: Release Downloader ROOTFS_Plus_Myself
+      if: (github.event.inputs.upload == 'root') 
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "Tao173/Auto-Update-Router"
+        out-file-path: "./Download"
+        tag: "ROOTFS_Plus_Myself"
+        fileName: "*"
+
+    - name: Select a version Lean
+      if: (github.event.inputs.upload == 'lean' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lean | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Immortalwrt
+      if: (github.event.inputs.upload == 'immortalwrt' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v immortalwrt | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Lienol
+      if: (github.event.inputs.upload == 'lienol' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lienol | awk '{print $9}'  | xargs rm -fr     
+
+    - name: Zip Firmware & Rootfs For Upload
+      id: zip
+      run: |
+        tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
+
+    - name: backup to cloud189-go
+      id: cloud189go
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloudgo.zip
+        unzip -j cloudgo.zip
+        rm -rf README.md && rm -rf LICENSE
+        ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
+        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloudpan189-go logout -y
+        echo "::set-output name=status::success"
+
+    - name: Set output status
+      id: step
+      if: steps.cloud189go.outputs.status == 'success'
+      run: echo "::set-output name=189cloudgo::success"   
+
+  189cloud:
+    if: ${{needs.189cloudgo.outputs.output}} != 'success' && !cancelled()
+    needs: [189cloudgo]  
+    runs-on: ubuntu-20.04
+    outputs:
+      output: ${{ steps.step.outputs.189cloud }}      
     steps:
     - name: Initialization environment
       env:
@@ -108,6 +202,7 @@ jobs:
         tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
 
     - name: backup to cloud189
+      if: steps.cloud189go.outputs.status != 'success' && !cancelled()
       id: cloud189
       timeout-minutes: 160
       run: |
@@ -119,31 +214,54 @@ jobs:
         ./cloud189 logout -f
         echo "::set-output name=status::success"
 
-    - name: backup to cloud189-go
-      if: steps.cloud189.outputs.status != 'success' && !cancelled()
-      id: cloud189go
-      timeout-minutes: 160
-      run: |
-        wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloudgo.zip
-        unzip -j cloudgo.zip
-        rm -rf README.md && rm -rf LICENSE
-        ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
-        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
-        ./cloudpan189-go logout -y
-        echo "::set-output name=status::success"
+    - name: Set output status
+      id: step
+      if: steps.cloud189.outputs.status == 'success'
+      run: echo "::set-output name=189cloud::success" 
 
+  over:
+    if: ${{needs.189cloud.outputs.output}}  == 'success'  ||  ${{needs.189cloudgo.outputs.output}} == 'success'
+    needs: [189cloudgo, 189cloud]
+    runs-on: ubuntu-20.04
+    steps:    
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo timedatectl set-timezone "$TZ"
+          sudo mkdir -p /workdir
+          sudo chown $USER:$GROUPS /workdir
+      - name: Clone source code
+        working-directory: /workdir
+        run: |
+          df -hT $PWD
+          git clone $REPO_URL -b $REPO_BRANCH openwrt
+          ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+          cd openwrt
+          useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %h")
+          Author=$(git show -s --date=short --format="Author: %an")
+          Date=$(git show -s --date=short --format="date: %cd")
+          Commit=$(git show -s --date=short --format="commit: %s")
+          Hash=$(git show -s --date=short --format="commit hash: %h")
+          echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+          echo "author=$Author" >> $GITHUB_ENV
+          echo "date=$Date" >> $GITHUB_ENV
+          echo "commit=$Commit" >> $GITHUB_ENV
+          echo "hash=$Hash" >> $GITHUB_ENV
+                                         
     - name: Telegram notification
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
-          OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2自用固件上传天翼云盘完成
+          OpenWrt-imgs-$(date +%Y-%m-%d)-${{ github.event.inputs.upload }}.tar.bz2自用固件上传天翼云盘完成
           编译时间：${{ env.DATE }}
           更新信息：
           作者: ${{ env.author }}
           时间: ${{ env.date }}
           内容: ${{ env.commit }}
           hash: ${{ env.hash }}
-          以上信息来自Lean源码提交记录
-
+          以上信息来自Lean源码提交记录      
