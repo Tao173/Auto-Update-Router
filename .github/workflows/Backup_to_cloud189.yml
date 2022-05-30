@@ -220,8 +220,8 @@ jobs:
       run: echo "::set-output name=189cloud::success" 
 
   over:
-    if: (${{needs.189cloud.outputs.output}}  == 'success'  ||  ${{needs.189cloudgo.outputs.output}} == 'success')
     needs: [189cloudgo, 189cloud]
+    if: (${{needs.189cloud.outputs.output}}  == 'success'  ||  ${{needs.189cloudgo.outputs.output}} == 'success')
     runs-on: ubuntu-20.04
     steps:    
       - name: Checkout
