@@ -1,0 +1,255 @@
+
+#===============================================
+# Description: Build OpenWrt
+# File name: build-openwrt.yml
+# Lisence: MIT
+# Author: P3TERX
+# https://github.com/P3TERX
+#===============================================
+
+name: ARMv8_Plus_Official_21.02
+
+on:
+#  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH Connection To Actions?'
+        required: false
+        default: 'false'
+      myself:
+        description: 'Just For Myself?'
+        required: false
+        default: 'false'
+#  schedule:
+#    - cron: '0 27 * * *'
+
+env:
+  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_BRANCH: openwrt-21.02
+  FEEDS_CONF: diy/arm/feeds.conf.default
+  CONFIG_FILE: diy/arm/of.config
+  DIY_P1_SH: diy/arm/diy-part1.sh
+  DIY_P2_SH: diy/arm/diy-part2of.sh
+  UPLOAD_BIN_DIR: false
+  UPLOAD_FIRMWARE: false
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+  FILE_NAME: ROOTFS_PLUS_Official
+  PRODUCT_NAME: ARMv8_PLUS_Official
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+    - name: Load custom feeds
+      run: |
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+        chmod +x $DIY_P1_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P1_SH
+    - name: Update feeds
+      run: cd openwrt && ./scripts/feeds update -a
+
+    - name: Install feeds
+      run: cd openwrt && ./scripts/feeds install -a
+
+    - name: Load custom configuration
+      run: |
+        [ -e files ] && mv files openwrt/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        chmod +x $DIY_P2_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P2_SH
+
+    - name: Just For Myself
+      if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false') 
+      run: |
+        cp -RT  diy/files openwrt/files
+        unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip
+        rm -rf openwrt/files/etc/config.zip
+        
+    - name: Setup Debug Session 'touch /tmp/keepalivegit'
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
+      uses: csexton/debugger-action@master
+
+    - name: Upload files to release
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false')     
+      uses: ncipollo/release-action@v1
+      with:
+        name: Files ${{ env.DATEA }}
+        artifacts: ./openwrt/.config
+        allowUpdates: true
+        tag: Files
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+          * 这是临时文件夹 🛒   
+               
+    - name: Download package
+      id: package
+      run: |
+        cd openwrt
+        make defconfig
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+    - name: Compile the firmware
+      id: compile
+      run: |
+        cd openwrt
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) || make -j1 || make -j1 V=s
+        echo "::set-output name=status::success"
+        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        echo "FILE_DATE=$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+    - name: Check space usage
+      if: (!cancelled())
+      run: df -hT
+
+    - name: Upload bin directory
+      uses: actions/upload-artifact@main
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: OpenWrt_bin_${{ env.DEVICE_NAME }}_${{ env.FILE_DATE }}
+        path: openwrt/bin
+
+    - name: Organize files
+      id: organize
+      if: steps.compile.outputs.status == 'success' && !cancelled()
+      run: |
+        cp openwrt/.config build.config
+        mkdir -p Packages
+        cp -rf openwrt/bin/packages/*/*/*.ipk Packages
+        tar -zcvf Packages.tar.gz Packages
+        mv *.config *.tar.gz openwrt/bin/targets/*/*
+        cp -rf openwrt/bin/targets lean
+        rm -rf openwrt/* && cd lean/*/*
+        rm -rf packages feeds.buildinfo sha256sums version.buildinfo
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      with:
+        name: OpenWrt_firmware_${{ env.DEVICE_NAME }}_${{ env.FILE_DATE }}
+        path: ${{ env.FIRMWARE }}
+
+    - name: Upload firmware to release
+      uses: ncipollo/release-action@v1
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        name: OpenWrt ${{ env.DATE }} for ${{ env.FILE_NAME }}
+        artifacts: ${{ env.FIRMWARE }}/*
+        allowUpdates: true
+        tag: ${{ env.FILE_NAME }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+          **This is temporary firmware for Armvirt 64**
+          * 这是 ARMv8_PLUS 多功能版打包临时固件，不可直刷
+          直刷固件参见 Tag 名为 ARMv8_PLUS 的 Releases
+          当前使用版本:【编译前的最后一次[➦主源码](https://github.com/openwrt/openwrt/tree/openwrt-21.02)更新记录】
+          ${{ env.useVersionInfo }}
+    - name: Package armvirt as openwrt
+      uses: Tao173/Auto-Update-Router@master
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      env:
+        OPENWRT_ARMVIRT: lean/*/*/*rootfs.tar.gz
+        PACKAGE_SOC: vplus_beikeyun_l1pro_s905d_s905x2_s905x3_s912_s922x_s922x-n2
+        KERNEL_REPO_URL: https://github.com/ophub/kernel/tree/main/pub/stable
+        KERNEL_VERSION_NAME: 5.4.163_5.10.83_5.15.13
+        KERNEL_AUTO_LATEST: true
+        WHOAMI: Tao
+        OPENWRT_VER: ${{env.REPO_BRANCH}}
+        ENABLE_WIFI_K504: 0
+        ENABLE_WIFI_K510: 0        
+        GZIP_IMGS: .gz
+
+    - name: Upload openwrt to release
+      uses: ncipollo/release-action@v1
+      if: env.PACKAGED_STATUS == 'success' && !cancelled()
+      with:
+        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+        allowUpdates: true
+        removeArtifacts: true
+        tag: ${{ env.PRODUCT_NAME }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+          **This is OpenWrt firmware for Armvirt 64**
+          * 这是 ARMv8 多功能版，基于OP官方源码编译，集成插件多适合折腾
+          默认 IP：192.168.124.38 默认密码：无
+          安装到 EMMC：系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
+          升级 OpenWrt：系统 → 晶晨宝盒 → 手动上传更新 或者 在线下载更新
+          当前使用版本:【编译前的最后一次➦[主源码](https://github.com/openwrt/openwrt/tree/openwrt-21.02)更新记录】
+          ${{ env.useVersionInfo }}
+          
+  #  - name: backup to cloud189
+  #    run: |
+  #      cd ..
+  #      wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloud.zip
+  #      unzip -j cloud.zip
+  #      tar -zcvf OpenWrt-$(date +%Y-%m-%d).tar.gz Auto-Update-Router
+  #      tar -zcvf OpenWrt-img-$(date +%Y-%m-%d).tar.gz /opt/openwrt_packit/output
+  #      ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
+  #      ./cloudpan189-go u OpenWrt-$(date +%Y-%m-%d).tar.gz /我的备份/OpenWrt
+  #      ./cloudpan189-go u OpenWrt-img-$(date +%Y-%m-%d).tar.gz /我的备份/OpenWrt
+  #      ./cloudpan189-go logout
+  
+  #over:
+  #  needs: [build]
+  #  runs-on: ubuntu-20.04
+  #  steps:
+  #  - name: TG notification #TG推送
+  #    run: curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=主人，OpenWrt系统打包成功。"
+  #  - name: Telegram notification
+  #    run: |
+  #      MSG="
+  #      编译时间：${{ env.DATE }}
+  #      OpenWrt 更新信息：${{ env.useVersionInfo }}
+  #      ${{ env.PRODUCT_NAME }} 编译完成
+  #      "
+  #      curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_TO }}&text=${MSG}"
+  #  - name: 如果出现失败通知TG
+  #    if: env.compile_error == 'true' && env.USE_TG == 'true'
+  #    uses: appleboy/telegram-action@master
+  #    with:
+  #      to: ${{ secrets.TELEGRAM_TO }}
+  #      token: ${{ secrets.TELEGRAM_TOKEN }}
+  #      message: some errors in compile
+        
+    - name: Telegram notification
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          编译时间：${{ env.DATE }}
+          更新信息：${{ env.useVersionInfo }}
+          ${{ env.PRODUCT_NAME }}打包完成

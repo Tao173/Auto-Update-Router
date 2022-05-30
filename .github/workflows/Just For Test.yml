@@ -1,0 +1,144 @@
+#===============================================
+# Description: Build OpenWrt
+# File name: build-openwrt.yml
+# Lisence: MIT
+# Author: P3TERX
+# https://github.com/P3TERX
+#===============================================
+
+name: Just For Test
+
+on:
+  workflow_dispatch:
+
+env:
+  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_BRANCH: master
+  FEEDS_CONF: diy/arm/feeds.conf.default
+  CONFIG_FILE: diy/arm/.config
+  DIY_P1_SH: diy/arm/diy-part1.sh
+  DIY_P2_SH: diy/arm/diy-part2.sh
+  UPLOAD_BIN_DIR: false
+  UPLOAD_FIRMWARE: false
+  UPLOAD_RELEASE: true
+  UPLOAD_189: true
+  TZ: Asia/Shanghai
+  FILE_NAME: Just_For_Test
+  PRODUCT_NAME: Just_For_Test
+
+jobs:
+  buildtwo:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        Author=$(git show -s --date=short --format="Author: %an")
+        Date=$(git show -s --date=short --format="date: %cd")
+        Commit=$(git show -s --date=short --format="commit: %s")
+        Hash=$(git show -s --date=short --format="commit hash: %h")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "author=$Author" >> $GITHUB_ENV
+        echo "date=$Date" >> $GITHUB_ENV
+        echo "commit=$Commit" >> $GITHUB_ENV
+        echo "hash=$Hash" >> $GITHUB_ENV
+        echo "DATEA=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        ${{ env.hash }}
+        echo "nametag=${{ github.event.inputs.upload }}" >> $GITHUB_ENV
+  
+    - name: Release Downloader ARMv8_Plus_Myself
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "Tao173/Auto-Update-Router"
+        out-file-path: "./Download"
+        tag: "ARMv8_Plus_Myself"
+        fileName: "*"
+
+    - name: Release Downloader ROOTFS_Plus_Myself
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "Tao173/Auto-Update-Router"
+        out-file-path: "./Download"
+        tag: "ROOTFS_Plus_Myself"
+        fileName: "*"
+
+    - name: Select a version rootfs
+      if: (github.event.inputs.upload == 'root' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v img | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Lean
+      if: (github.event.inputs.upload == 'lean' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lean | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Immortalwrt
+      if: (github.event.inputs.upload == 'immortalwrt' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v immortalwrt | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Lienol
+      if: (github.event.inputs.upload == 'lienol' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lienol | awk '{print $9}'  | xargs rm -fr     
+
+    - name: Zip Firmware For Upload
+      id: zip
+      run: |
+        tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
+
+    - name: backup to cloud189
+      if: steps.cloud189go.outputs.status != 'success' && !cancelled()
+      id: cloud189
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/gowsp/cloud189/releases/download/$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | cut -d " " -f 1 )/cloud189_$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | wget -qO- -t1 -T2 "https://api.github.com/repos/gowsp/cloud189/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/v//g;s/ //g' )_linux_amd64.tar.gz -O cloud.tar.gz
+        tar -zxvf cloud.tar.gz
+        rm -rf README.md && rm -rf LICENSE
+        ./cloud189 login -i ${{ secrets.NAME }} ${{ secrets.PASS }}
+        ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloud189 logout -f
+        echo "::set-output name=status::success"
+
+    - name: backup to cloud189-go
+      id: cloud189go
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloudgo.zip
+        unzip -j cloudgo.zip
+        rm -rf README.md && rm -rf LICENSE
+        ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
+        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloudpan189-go logout -y
+        echo "::set-output name=status::success"
+
+    - name: Telegram notification
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2自用固件上传天翼云盘完成
+          编译时间：${{ env.DATE }}
+          更新信息：
+          作者: ${{ env.author }}
+          时间: ${{ env.date }}
+          内容: ${{ env.commit }}
+          hash: ${{ env.hash }}
+

@@ -1,0 +1,276 @@
+#===============================================
+# Description: ARMv8 Package
+# File name: armv8-package.yml
+# Lisence: MIT
+# Author: HAIIBO
+# https://github.com/haiibo
+#===============================================
+
+name: Package From ROOTFS
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [ARMv8_Plus_immortalwrt_21.02,ARMv8_Plus_Lienol_21.02,ARMv8_Plus_Lean]
+    types: [completed]
+    
+env:
+  UPLOAD_FIRMWARE: false
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+
+jobs:
+  Package-for-Li:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/Lienol/openwrt
+      REPO_BRANCH: 21.02    
+      VERSION: Lienol
+      EXPLAIN: 这是Plus_Lienol版
+      PRODUCT_NAME: ARMv8_Plus
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+
+    - name: Download Basepackages
+      run: |
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Just_For_Myself/openwrt-armvirt-64-default-rootfs.tar.gz
+        sudo apt install rename
+        rename "s/openwrt/openwrt/" openwrt-armvirt-64-default-rootfs.tar.gz
+        
+    - name: Package armvirt as openwrt
+      uses: Tao173/Auto-Update-Router@master
+      env:
+        OPENWRT_ARMVIRT: openwrt-armvirt-64-default-rootfs.tar.gz
+        PACKAGE_SOC: s912
+        KERNEL_REPO_URL: https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel
+        KERNEL_VERSION_NAME: 5.10.83_5.15.13
+        KERNEL_AUTO_LATEST: true
+        WHOAMI: Tao
+        OPENWRT_VER: ${{env.REPO_BRANCH}}
+        ENABLE_WIFI_K504: 0
+        ENABLE_WIFI_K510: 0        
+        GZIP_IMGS: .gz 
+
+    - name: Setup Debug Session
+      uses: csexton/debugger-action@master
+
+    - name: Rename Firmware and Rootfs for upload
+      run: |
+        sudo apt install rename
+        cd ${{ env.PACKAGED_OUTPUTPATH }}
+        rename "s/openwrt/Lienol/" ./*.gz
+
+    - name: Upload artifact to actions
+      uses: kittaakos/upload-artifact-as-is@master
+      if: env.PACKAGED_STATUS == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      with:
+        path: ${{ env.PACKAGED_OUTPUTPATH }}
+
+    - name: Upload openwrt to release
+      uses: ncipollo/release-action@v1
+      if: env.PACKAGED_STATUS == 'success' && !cancelled()
+      with:
+        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+        allowUpdates: true
+        replacesArtifacts: true
+        tag: ${{ env.PRODUCT_NAME }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+          **This is OpenWrt firmware for Armvirt 64**
+          * ${{ env.EXPLAIN }}
+          默认 IP：10.10.10.10 默认密码：无
+          安装到 EMMC：系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
+          升级 OpenWrt：系统 → 晶晨宝盒 → 手动上传更新 或者 在线下载更新
+          当前使用版本:【编译前的最后一次➦[主源码](https://github.com/coolsnowwolf/lede)更新记录】
+          ${{ env.useVersionInfo }}
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Package-for-Le:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/coolsnowwolf/lede
+      REPO_BRANCH: master    
+      VERSION: Lean
+      EXPLAIN: 这是Plus_Lean版
+      PRODUCT_NAME: ARMv8_Plus
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+
+    - name: Download Basepackages
+      run: |
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Just_For_Myself/Lean-armvirt-64-default-rootfs.tar.gz
+        sudo apt install rename
+        rename "s/Lean/openwrt/" Lean-armvirt-64-default-rootfs.tar.gz
+
+    - name: Package armvirt as openwrt
+      uses: Tao173/Auto-Update-Router@master
+      env:
+        OPENWRT_ARMVIRT: openwrt-armvirt-64-default-rootfs.tar.gz
+        PACKAGE_SOC: s912
+        KERNEL_REPO_URL: https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel
+        KERNEL_VERSION_NAME: 5.10.83_5.15.13
+        KERNEL_AUTO_LATEST: true
+        WHOAMI: Tao
+        ENABLE_WIFI_K504: 0
+        ENABLE_WIFI_K510: 0        
+        GZIP_IMGS: .gz
+
+    - name: Rename Firmware and Rootfs for upload
+      run: |
+        sudo apt install rename
+        cd ${{ env.PACKAGED_OUTPUTPATH }}
+        rename "s/openwrt/Lean/" ./*.gz
+
+    - name: Upload artifact to actions
+      uses: kittaakos/upload-artifact-as-is@master
+      if: env.PACKAGED_STATUS == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      with:
+        path: ${{ env.PACKAGED_OUTPUTPATH }}
+
+    - name: Upload openwrt to release
+      uses: ncipollo/release-action@v1
+      if: env.PACKAGED_STATUS == 'success' && !cancelled()
+      with:
+        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+        allowUpdates: true
+        replacesArtifacts: true
+        tag: ${{ env.PRODUCT_NAME }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+          **This is OpenWrt firmware for Armvirt 64**
+          * ${{ env.EXPLAIN }}
+          默认 IP：10.10.10.10 默认密码：无
+          安装到 EMMC：系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
+          升级 OpenWrt：系统 → 晶晨宝盒 → 手动上传更新 或者 在线下载更新
+          当前使用版本:【编译前的最后一次➦[主源码](https://github.com/coolsnowwolf/lede)更新记录】
+          ${{ env.useVersionInfo }}
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////          
+  Package-for-Im:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      REPO_URL: https://github.com/immortalwrt/immortalwrt
+      REPO_BRANCH: openwrt-21.02    
+      VERSION: PLUS
+      EXPLAIN: 这是Plus_immortalwrt版
+      PRODUCT_NAME: ARMv8_Plus
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+
+    - name: Download Basepackages
+      run: |
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus/${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
+        sudo apt install rename
+        rename "s/${{ env.VERSION }}/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
+
+    - name: Package armvirt as openwrt
+      uses: Tao173/Auto-Update-Router@master
+      env:
+        OPENWRT_ARMVIRT: openwrt-armvirt-64-default-rootfs.tar.gz
+        PACKAGE_SOC: s912
+        KERNEL_REPO_URL: https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel
+        KERNEL_VERSION_NAME: 5.4.163_5.10.83_5.15.13_5.17.13
+        KERNEL_AUTO_LATEST: true
+        WHOAMI: Tao
+        OPENWRT_VER: ${{env.REPO_BRANCH}}
+        ENABLE_WIFI_K504: 0
+        ENABLE_WIFI_K510: 0        
+        GZIP_IMGS: .gz
+
+    - name: Rename Firmware and Rootfs for upload
+      run: |
+        sudo apt install rename
+        cd  ${{ env.PACKAGED_OUTPUTPATH }}
+        rename "s/openwrt/immortalwrt/" ./*.gz
+
+    - name: Upload artifact to actions
+      uses: kittaakos/upload-artifact-as-is@master
+      if: env.PACKAGED_STATUS == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      with:
+        path: ${{ env.PACKAGED_OUTPUTPATH }}
+
+    - name: Upload openwrt to release
+      uses: ncipollo/release-action@v1
+      if: env.PACKAGED_STATUS == 'success' && !cancelled()
+      with:
+        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
+        allowUpdates: true
+        replacesArtifacts: true
+        tag: ${{ env.PRODUCT_NAME }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+          **This is OpenWrt firmware for Armvirt 64**
+          * ${{ env.EXPLAIN }}

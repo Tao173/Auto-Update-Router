@@ -1,0 +1,13 @@
+name: ssh-#touch /tmp/keepalivegit
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Setup Debug Session
+      uses: csexton/debugger-action@master

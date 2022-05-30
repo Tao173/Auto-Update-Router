@@ -1,0 +1,21 @@
+
+config lists
+	option webname 'HA'
+	option weburl '192.168.124.38:'
+	option webpath '8123'
+
+config lists
+	option webname 'ZB'
+	option weburl '192.168.124.38:'
+	option webpath '8081'
+
+config lists
+	option webname 'NR'
+	option weburl '192.168.124.38:'
+	option webpath '1880'
+
+config lists
+	option webname 'QL'
+	option webpath '5700'
+	option weburl '192.168.124.38:'
+
