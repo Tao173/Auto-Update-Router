@@ -130,12 +130,15 @@ jobs:
         path: .commitHash
         key: HEAD-${{ steps.getHash.outputs.commitHashd }}
 
-    - name: Save New Commit Hash
+    - name: Set output for next job
       id: outputunifreq
+      if: steps.cacheHash.outputs.cache-hit == 'true'
+      run: |
+        echo "::set-output name=unifreq::hello"
+    - name: Save New Commit Hash
       if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
         echo ${{ steps.getHash.outputs.commitHashd }} | tee .commitHash
-        echo "::set-output name=unifreq::hello"
     - name: Trigger build
       if: steps.cacheHash.outputs.cache-hit != 'true'
       uses: peter-evans/repository-dispatch@v1
@@ -144,7 +147,8 @@ jobs:
         event-type: Unifreq Source Code Update
 
   New-Update-Files:
-    needs: [Checkd]    
+    needs: [Checkd] 
+    if: (${{needs.Checkd.outputs.output}} != 'hello')   
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
@@ -172,7 +176,6 @@ jobs:
         ls ./*.tar.gz |xargs -n1 tar xzvf
         rm -rf ./*gz
     - name: Commit
-      if: (${{needs.Checkd.outputs.output}} != 'hello')
       run: |
         echo ${{needs.Checkd.outputs.output}}
         git config --global user.email Mr.Wanzi@outlook.com
