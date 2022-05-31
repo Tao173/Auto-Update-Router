@@ -144,7 +144,6 @@ jobs:
         event-type: Unifreq Source Code Update
 
   New-Update-Files:
-    if: ${{needs.Checkd.outputs.output}} == 'hello'
     needs: [Checkd]    
     runs-on: ubuntu-20.04
     steps:
@@ -173,6 +172,7 @@ jobs:
         ls ./*.tar.gz |xargs -n1 tar xzvf
         rm -rf ./*gz
     - name: Commit
+      if: ${{needs.Checkd.outputs.output}} == 'hello'
       run: |
         git config --global user.email Mr.Wanzi@outlook.com
         git config --global user.name Tao-Another
