@@ -114,6 +114,8 @@ jobs:
     env:
       REPO_URL: https://github.com/unifreq/openwrt_packit
       REPO_BRANCH: master
+    outputs:
+      output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
     - name: Get Commit Hash
       id: getHash
@@ -129,9 +131,11 @@ jobs:
         key: HEAD-${{ steps.getHash.outputs.commitHashd }}
 
     - name: Save New Commit Hash
+      id: outputunifreq
       if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
         echo ${{ steps.getHash.outputs.commitHashd }} | tee .commitHash
+        echo "::set-output name=unifreq::hello"
     - name: Trigger build
       if: steps.cacheHash.outputs.cache-hit != 'true'
       uses: peter-evans/repository-dispatch@v1
@@ -140,6 +144,7 @@ jobs:
         event-type: Unifreq Source Code Update
 
   New-Update-Files:
+    if: ${{needs.Checkd.outputs.output}} == 'hello'
     needs: [Checkd]    
     runs-on: ubuntu-20.04
     steps:
