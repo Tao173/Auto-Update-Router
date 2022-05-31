@@ -6,13 +6,19 @@
 # https://github.com/haiibo
 #===============================================
 
-name: Package From ROOTFS
+name: Package And Backup
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [ARMv8_Plus_immortalwrt_21.02,ARMv8_Plus_Lienol_21.02,ARMv8_Plus_Lean]
-    types: [completed]
+    inputs:
+      ssh:
+        description: 'SSH Connection To Actions?'
+        required: false
+        default: 'false'
+      upload:
+        description: 'Which one want to upload? lean/immortalwrt/lienol/root/all'
+        required: false
+        default: 'all'
     
 env:
   UPLOAD_FIRMWARE: false
@@ -56,9 +62,9 @@ jobs:
 
     - name: Download Basepackages
       run: |
-        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Just_For_Myself/openwrt-armvirt-64-default-rootfs.tar.gz
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Myself/immortalwrt-armvirt-64-default-rootfs.tar.gz
         sudo apt install rename
-        rename "s/openwrt/openwrt/" openwrt-armvirt-64-default-rootfs.tar.gz
+        rename "s/immortalwrt/openwrt/" openwrt-armvirt-64-default-rootfs.tar.gz
         
     - name: Package armvirt as openwrt
       uses: Tao173/Auto-Update-Router@master
@@ -145,7 +151,7 @@ jobs:
 
     - name: Download Basepackages
       run: |
-        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Just_For_Myself/Lean-armvirt-64-default-rootfs.tar.gz
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Myself/Lean-armvirt-64-default-rootfs.tar.gz
         sudo apt install rename
         rename "s/Lean/openwrt/" Lean-armvirt-64-default-rootfs.tar.gz
 
@@ -196,7 +202,6 @@ jobs:
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////          
   Package-for-Im:
     runs-on: ubuntu-20.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       REPO_URL: https://github.com/immortalwrt/immortalwrt
       REPO_BRANCH: openwrt-21.02    
@@ -231,9 +236,9 @@ jobs:
 
     - name: Download Basepackages
       run: |
-        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus/${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Myself/Lienol-armvirt-64-default-rootfs.tar.gz
         sudo apt install rename
-        rename "s/${{ env.VERSION }}/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
+        rename "s/Lienol/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
 
     - name: Package armvirt as openwrt
       uses: Tao173/Auto-Update-Router@master
@@ -274,3 +279,123 @@ jobs:
         body: |
           **This is OpenWrt firmware for Armvirt 64**
           * ${{ env.EXPLAIN }}
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Backuptocloud189:
+    if: ${{ always() }}
+    needs: [Package-for-Li, Package-for-Le, Package-for-Im]  
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/coolsnowwolf/lede
+      REPO_BRANCH: master   
+      VERSION: Lienol
+      EXPLAIN: 这是Plus_Lienol版
+      PRODUCT_NAME: ARMv8_Plus
+    steps:
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        Author=$(git show -s --date=short --format="Author: %an")
+        Date=$(git show -s --date=short --format="date: %cd")
+        Commit=$(git show -s --date=short --format="commit: %s")
+        Hash=$(git show -s --date=short --format="commit hash: %h")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "author=$Author" >> $GITHUB_ENV
+        echo "date=$Date" >> $GITHUB_ENV
+        echo "commit=$Commit" >> $GITHUB_ENV
+        echo "hash=$Hash" >> $GITHUB_ENV
+        echo "DATEA=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        echo "nametag=${{ github.event.inputs.upload }}" >> $GITHUB_ENV
+  
+    - name: Release Downloader ARMv8_Plus_Myself
+      if: (github.event.inputs.upload != 'root') 
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "Tao173/Auto-Update-Router"
+        out-file-path: "./Download"
+        tag: "ARMv8_Plus_Myself"
+        fileName: "*"
+
+    - name: Release Downloader ROOTFS_Plus_Myself
+      if: (github.event.inputs.upload == 'root') 
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "Tao173/Auto-Update-Router"
+        out-file-path: "./Download"
+        tag: "ROOTFS_Plus_Myself"
+        fileName: "*"
+
+    - name: Select a version Lean
+      if: (github.event.inputs.upload == 'lean' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lean | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Immortalwrt
+      if: (github.event.inputs.upload == 'immortalwrt' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v immortalwrt | awk '{print $9}'  | xargs rm -fr
+
+    - name: Select a version Lienol
+      if: (github.event.inputs.upload == 'lienol' && github.event.inputs.upload != 'all') 
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lienol | awk '{print $9}'  | xargs rm -fr     
+
+    - name: Zip Firmware & Rootfs For Upload
+      id: zip
+      run: |
+        tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
+
+    - name: backup to cloud189-go
+      id: cloud189go
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloudgo.zip
+        unzip -j cloudgo.zip
+        rm -rf README.md && rm -rf LICENSE
+        ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
+        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloudpan189-go logout -y
+        echo "::set-output name=status::success"
+
+    - name: backup to cloud189
+      if: steps.cloud189go.outputs.status != 'success' && !cancelled()
+      id: cloud189
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/gowsp/cloud189/releases/download/$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | cut -d " " -f 1 )/cloud189_$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | wget -qO- -t1 -T2 "https://api.github.com/repos/gowsp/cloud189/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/v//g;s/ //g' )_linux_amd64.tar.gz -O cloud.tar.gz
+        tar -zxvf cloud.tar.gz
+        rm -rf README.md && rm -rf LICENSE
+        ./cloud189 login -i ${{ secrets.NAME }} ${{ secrets.PASS }}
+        ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloud189 logout -f
+        echo "::set-output name=status::success"
+
+    - name: Telegram notification
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2自用固件上传天翼云盘完成
+          编译时间：${{ env.DATE }}
+          更新信息：
+          作者: ${{ env.author }}
+          时间: ${{ env.date }}
+          内容: ${{ env.commit }}
+          hash: ${{ env.hash }}
+          以上信息来自Lean源码提交记录
+
