@@ -211,40 +211,6 @@ jobs:
           升级 OpenWrt：系统 → 晶晨宝盒 → 手动上传更新 或者 在线下载更新
           当前使用版本:【编译前的最后一次➦[主源码](https://github.com/openwrt/openwrt/tree/openwrt-21.02)更新记录】
           ${{ env.useVersionInfo }}
-          
-  #  - name: backup to cloud189
-  #    run: |
-  #      cd ..
-  #      wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloud.zip
-  #      unzip -j cloud.zip
-  #      tar -zcvf OpenWrt-$(date +%Y-%m-%d).tar.gz Auto-Update-Router
-  #      tar -zcvf OpenWrt-img-$(date +%Y-%m-%d).tar.gz /opt/openwrt_packit/output
-  #      ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
-  #      ./cloudpan189-go u OpenWrt-$(date +%Y-%m-%d).tar.gz /我的备份/OpenWrt
-  #      ./cloudpan189-go u OpenWrt-img-$(date +%Y-%m-%d).tar.gz /我的备份/OpenWrt
-  #      ./cloudpan189-go logout
-  
-  #over:
-  #  needs: [build]
-  #  runs-on: ubuntu-20.04
-  #  steps:
-  #  - name: TG notification #TG推送
-  #    run: curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=主人，OpenWrt系统打包成功。"
-  #  - name: Telegram notification
-  #    run: |
-  #      MSG="
-  #      编译时间：${{ env.DATE }}
-  #      OpenWrt 更新信息：${{ env.useVersionInfo }}
-  #      ${{ env.PRODUCT_NAME }} 编译完成
-  #      "
-  #      curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_TO }}&text=${MSG}"
-  #  - name: 如果出现失败通知TG
-  #    if: env.compile_error == 'true' && env.USE_TG == 'true'
-  #    uses: appleboy/telegram-action@master
-  #    with:
-  #      to: ${{ secrets.TELEGRAM_TO }}
-  #      token: ${{ secrets.TELEGRAM_TOKEN }}
-  #      message: some errors in compile
         
     - name: Telegram notification
       uses: appleboy/telegram-action@master

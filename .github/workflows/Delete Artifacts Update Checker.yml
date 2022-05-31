@@ -7,34 +7,34 @@ name: Delete Artifacts Update Checker
 
 on:
   schedule:
-    - cron: 20 0/1 * * * 
+    - cron: '*/5 * * * *' 
   workflow_dispatch:
     inputs:
       SSH:
         description: 'SSH connection to Actions?'
         required: false
-        default: 'false'   
-
-env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  TZ: Asia/Shanghai
+        default: 'false'
 
 jobs:
-  Check:
+  Checka:
     runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/coolsnowwolf/lede
+      REPO_BRANCH: master
+      TZ: Asia/Shanghai
     steps:
     - name: Get Commit Hash
       id: getHash
       run: |
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH .
-        echo "::set-output name=commitHash::$(git rev-parse HEAD)"
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH ./c
+        cd c
+        echo "::set-output name=commitHasha::$(git rev-parse HEAD)"
     - name: Compare Commit Hash
       id: cacheHash
       uses: actions/cache@v2
       with:
-        path: .commitHash
-        key: HEAD-${{ steps.getHash.outputs.commitHash }}
+        path: .commitHasha
+        key: HEAD-${{ steps.getHash.outputs.commitHasha }}
 
     - name: Save New Commit Hash
       if: steps.cacheHash.outputs.cache-hit != 'true'
@@ -45,16 +45,107 @@ jobs:
       uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
-        event-type: lede Source Code Update
+        event-type: Lean Source Code Update     
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////        
+  Checkb:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/Lienol/openwrt
+      REPO_BRANCH: 21.02
+      TZ: Asia/Shanghai
+    steps:
+    - name: Get Commit Hash
+      id: getHash
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH ./b
+        cd b
+        echo "::set-output name=commitHashb::$(git rev-parse HEAD)"
+    - name: Compare Commit Hash
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: .commitHash
+        key: HEAD-${{ steps.getHash.outputs.commitHashb }}
+
+    - name: Save New Commit Hash
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      run: |
+        echo ${{ steps.getHash.outputs.commitHashb }} | tee .commitHash
+    - name: Trigger build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+        event-type: Lienol Source Code Update     
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////        
+  Checkc:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/immortalwrt/immortalwrt
+      REPO_BRANCH: openwrt-21.02
+      TZ: Asia/Shanghai
+    steps:
+    - name: Get Commit Hash
+      id: getHash
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH ./c
+        cd c
+        echo "::set-output name=commitHashc::$(git rev-parse HEAD)"
+    - name: Compare Commit Hash
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: .commitHash
+        key: HEAD-${{ steps.getHash.outputs.commitHashc }}
+
+    - name: Save New Commit Hash
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      run: |
+        echo ${{ steps.getHash.outputs.commitHashc }} | tee .commitHash
+    - name: Trigger build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+        event-type: Immortalwrt Source Code Update      
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////        
+  Checkd:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/unifreq/openwrt_packit
+      REPO_BRANCH: master
+      TZ: Asia/Shanghai
+    steps:
+    - name: Get Commit Hash
+      id: getHash
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH ./d
+        cd c
+        echo "::set-output name=commitHashd::$(git rev-parse HEAD)"
+    - name: Compare Commit Hash
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: .commitHash
+        key: HEAD-${{ steps.getHash.outputs.commitHashd }}
+
+    - name: Save New Commit Hash
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      run: |
+        echo ${{ steps.getHash.outputs.commitHashd }} | tee .commitHash
+    - name: Trigger build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+        event-type: Unifreq Source Code Update
 
   New-Update-Files:
-    if: ${{ always() }}
-    needs: [Check]    
+    needs: [Checkd]    
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
       uses: actions/checkout@main
-      
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -63,8 +154,7 @@ jobs:
         pwd
         chmod +x pull.sh
         ./pull.sh
-
-    - name: Download kernel
+    - name: Download Mysele kernel
       uses: robinraju/release-downloader@v1.3
       with:
         repository: "Tao173/compile-kernel"
@@ -72,14 +162,12 @@ jobs:
         fileName: "*"
         tarBall: true
         out-file-path: ./backup/mykernel
-
-    - name: Release tar
+    - name: Release kernel tar
       run: |
         cd ./backup/mykernel
         find ./ -name *compile*|xargs rm -rf
         ls ./*.tar.gz |xargs -n1 tar xzvf
         rm -rf ./*gz
-        
     - name: Commit
       run: |
         git config --global user.email Mr.Wanzi@outlook.com
@@ -87,19 +175,10 @@ jobs:
         git add .
         git commit -m"action:`date`"
         git pull --rebase
-        
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.ACTIONS_TRIGGER_PAT }}        
-                
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@v2
-      with:
-        retain_days: 0
-        keep_minimum_runs: 3
-  
-# //////////////////////////////////////////////////////////////////////////////////////////////
+        github_token: ${{ secrets.ACTIONS_TRIGGER_PAT }}             
 
 # //////////////////////////////////////////////////////////////////////////////////////////////
   Cleaning:
@@ -108,19 +187,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Delete Older Workflows
-      uses: GitRML/delete-workflow-runs@main
+      uses: Mattraks/delete-workflow-runs@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         retain_days: 1
-        keep_minimum_runs: 2
-
-    - name: Delete Older Releases
-      uses: dev-drprasad/delete-older-releases@master
-      with:
-        keep_latest: 10
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        keep_minimum_runs: 1
 
     - name: Telegram notification upload success
       uses: appleboy/telegram-action@master
@@ -128,53 +199,6 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
-          源码更新成功,垃圾清理完成。
+          源码更新成功,垃圾清理完成👏。
 
 
-
-
-
-
-
-#  Old-Update-Files:
-#    runs-on: ubuntu-20.04
-#    steps:
-#    - name: Checkout
-#      uses: actions/checkout@main
-#      
-#    - name: SSH connection to Actions
-#      uses: P3TERX/ssh2actions@v1.0.0
-#      if: (github.event.inputs.SSH == 'true' || github.event.inputs.SSH  == '1') 
-#      
-#    - name: Initialization environment
-#      env:
-#        DEBIAN_FRONTEND: noninteractive
-#      run: |
-#        sudo timedatectl set-timezone "$TZ"
-#        pwd
-#        sudo rm -rf ./opt
-#        svn export https://github.com/coolsnowwolf/lede/trunk/ ./opt/lede
-#        svn export https://github.com/breakings/OpenWrt/trunk/opt/kernel ./opt/kernel
-#        svn export https://github.com/unifreq/openwrt_packit/trunk/ ./opt/openwrt_packit
-# 
-#
-#        sed  -i '1012c   \       \ sed -e 's/root::/root::/' -i ./etc/shadow' ./opt/openwrt_packit/public_funcs
-#
-#    - name: Commit
-#      run: |
-#        git config --global user.email Mr.Wanzi@outlook.com
-#        git config --global user.name Tao173
-#        git add .
-#        git commit -m"action:`date`"
-#        git pull
-#        
-#    - name: Push changes
-#      uses: ad-m/github-push-action@master
-#      with:
-#        github_token: ${{ secrets.GITHUB_TOKEN }}        
-#                
-#    - name: Delete workflow runs
-#      uses: Mattraks/delete-workflow-runs@v2
-#      with:
-#        retain_days: 0
-#        keep_minimum_runs: 5
