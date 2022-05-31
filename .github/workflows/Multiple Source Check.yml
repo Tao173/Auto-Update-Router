@@ -170,7 +170,6 @@ jobs:
         out-file-path: ./backup/mykernel
     - name: Release kernel tar
       run: |
-        echo "fuck=${{needs.Checkd.outputs.output}}" >> $GITHUB_ENV
         cd ./backup/mykernel
         find ./ -name *compile*|xargs rm -rf
         ls ./*.tar.gz |xargs -n1 tar xzvf
@@ -178,7 +177,6 @@ jobs:
     - name: Commit
       if: ${{ needs.Checkd.outputs.output != 'hello' }}
       run: |
-        echo ${{needs.Checkd.outputs.output}} ${{ env.fuck }} 
         git config --global user.email Mr.Wanzi@outlook.com
         git config --global user.name Tao-Another
         git add .
