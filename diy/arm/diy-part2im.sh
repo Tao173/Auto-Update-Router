@@ -9,7 +9,7 @@
 
 #修改banner 
 rm -f package/base-files/files/etc/banner
-svn export https://github.com/Tao173/Auto-Update-Router/trunk/diy/banner package/base-files/files/etc/  --force
+svn export https://github.com/Tao173/Auto-Update-Router/trunk/diy/imbanner package/base-files/files/etc/banner  --force
 # Hostname&luci
 sed -i 's/ImmortalWrt/OpenWrt-Tao/g' package/base-files/files/bin/config_generate
 sed -i "s/%D %V %C/%V %D/g" package/base-files/files/etc/openwrt_release
@@ -75,13 +75,21 @@ make && sudo make install
 popd
 #修改主题多余版本信息
 ## /usr/lib/lua/luci/view/themes/argon/footer.htm
-sed -i "s|(<%= ver.luciversion %>)||g" feeds/luci/*/luasrc/view/themes/*/footer.htm
+sed -i "s|(<%= ver.luciversion %>)||g" feeds/luci/themes/*/luasrc/view/themes/*/footer.htm
 sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a>|g" feeds/luci/themes/*/luasrc/view/themes/*/footer.htm
 sed -i "/<%= ver.distversion %>/d" feeds/luci/themes/*/luasrc/view/themes/*/footer.htm
 sed -i "s|(<%= ver.luciversion %>)||g" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
 sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a>|g" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
 sed -i "/<%= ver.distversion %>/d" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
+#web概览修改
 sed -i "s/(luciversion || '')/(boardinfo.kernel)/g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s/ + cpubench.cpubench//g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description : '')?g" package/emortal/autocore/files/generic/10_system.jsw/status/include/10_system.js
+#修改cpucore
+sed -i "s/(luciversion || '')/(boardinfo.kernel)/g" package/emortal/autocore/files/generic/10_system.jsw/status/include/10_system.js
+sed -i "s/ + cpubench.cpubench//g" package/emortal/autocore/files/generic/10_system.js
+sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description : '')?g" package/emortal/autocore/files/generic/10_system.js
+
 #去除固件版本小尾巴
 #sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 #修改web页面内核信息(菜鸟转义)
