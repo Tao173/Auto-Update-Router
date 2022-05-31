@@ -1,10 +1,8 @@
-
 #===============================================
 # Description: Build OpenWrt
-# File name: build-openwrt.yml
 # Lisence: MIT
-# Author: P3TERX
-# https://github.com/P3TERX
+# Original Author: P3TERX
+# DIY: Tao173 
 #===============================================
 
 name: ARMv8_Plus_Lienol_21.02
@@ -412,7 +410,7 @@ jobs:
       uses: ncipollo/release-action@v1
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        name: OpenWrt for Myself ${{ env.FILE_NAME }}❌禁止❌使用❌
+        name: OpenWrt for Myself ${{ env.FILE_NAME }}
         artifacts: ${{ env.FIRMWARE }}/*
         allowUpdates: true
         replacesArtifacts: true        

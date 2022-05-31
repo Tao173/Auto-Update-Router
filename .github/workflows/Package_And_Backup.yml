@@ -1,9 +1,7 @@
 #===============================================
-# Description: ARMv8 Package
-# File name: armv8-package.yml
+# Description: Package And Backup
 # Lisence: MIT
-# Author: HAIIBO
-# https://github.com/haiibo
+# Original Author: Tao173 
 #===============================================
 
 name: Package And Backup

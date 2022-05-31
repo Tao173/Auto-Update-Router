@@ -9,7 +9,8 @@
 
 #修改banner 
 rm -f package/base-files/files/etc/banner
-svn export https://github.com/Tao173/Auto-Update-Router/trunk/diy/imbanner package/base-files/files/etc/banner  --force
+svn export https://github.com/Tao173/Auto-Update-Router/trunk/diy/banner package/base-files/files/etc/banner  --force
+svn export https://github.com/Tao173/Auto-Update-Router/trunk/diy/banner package/emortal/default-settings/files/openwrt_banner  --force
 # Hostname&luci
 sed -i 's/ImmortalWrt/OpenWrt-Tao/g' package/base-files/files/bin/config_generate
 sed -i "s/%D %V %C/%V %D/g" package/base-files/files/etc/openwrt_release
@@ -21,7 +22,7 @@ sed -i 's/192.168.1.1/192.168.124.38/g' package/base-files/files/bin/config_gene
 # sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' package/lean/autocore/Makefile
 
 #2. 取消首次登陆WEB页密码 设置ttyd免帐号登录
-#sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/emortal/default-settings/files/99-default-settings
+sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root::0:0:99999:7:::/' package/emortal/default-settings/files/99-default-settings
 sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
 #sed -i "s|'OpenWrt 21.02-SNAPSHOT'|'OpenWrt 21.02-Lienol'|g" package/default-settings/files/zzz-default-settings
 
@@ -68,7 +69,6 @@ svn co https://github.com/op4packages/pdnsd-alt/trunk  package/pdnsd-alt
 
 # 科学上网插件依赖
 svn co https://github.com/vernesong/OpenClash/trunk/luci-app-openclash package/luci-app-openclash
-
 # 编译 po2lmo (如果有po2lmo可跳过)
 pushd package/luci-app-openclash/tools/po2lmo
 make && sudo make install
@@ -83,11 +83,12 @@ sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a
 sed -i "/<%= ver.distversion %>/d" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
 #web概览修改
 sed -i "s/ + cpubench.cpubench//g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description : '')?g" package/emortal/autocore/files/generic/10_system.jsw/status/include/10_system.js
+sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 #修改cpucore
 sed -i "s/ + cpubench.cpubench//g" package/emortal/autocore/files/generic/10_system.js
 sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description : '')?g" package/emortal/autocore/files/generic/10_system.js
-
+sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description : '')?g" package/emortal/autocore/files/generic/10_system.js
 #去除固件版本小尾巴
 #sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 #修改web页面内核信息(菜鸟转义)

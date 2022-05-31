@@ -1,13 +1,14 @@
 #===============================================
-#   - name: Setup Debug Session
-#     uses: csexton/debugger-action@master
+# Description: multiple source check
+# Lisence: MIT
+# Original Author: Tao173 
 #===============================================
 
 name: Delete Artifacts Update Checker
 
 on:
   schedule:
-    - cron: '*/5 * * * *' 
+    - cron: '*/30 * * * *' 
   workflow_dispatch:
     inputs:
       SSH:
