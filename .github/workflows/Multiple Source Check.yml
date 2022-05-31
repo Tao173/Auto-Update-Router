@@ -184,7 +184,7 @@ jobs:
 # //////////////////////////////////////////////////////////////////////////////////////////////
   Cleaning:
     if: ${{ always() }}
-    needs: [New-Update-Files,Check]    
+    needs: [New-Update-Files,Checka,Checkb,Checkc,Checkd]    
     runs-on: ubuntu-20.04
     steps:
     - name: Delete Older Workflows
