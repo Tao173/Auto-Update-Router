@@ -176,7 +176,7 @@ jobs:
         ls ./*.tar.gz |xargs -n1 tar xzvf
         rm -rf ./*gz
     - name: Commit
-      if: ${{ {needs.Checkd.outputs.output != 'hello' }}
+      if: ${{ needs.Checkd.outputs.output != 'hello' }}
       run: |
         echo ${{needs.Checkd.outputs.output}} ${{ env.fuck }} 
         git config --global user.email Mr.Wanzi@outlook.com
