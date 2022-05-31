@@ -6,8 +6,6 @@
 name: Delete Artifacts Update Checker
 
 on:
-  #release:
-  #  types: published
   schedule:
     - cron: 20 0/1 * * * 
   workflow_dispatch:
