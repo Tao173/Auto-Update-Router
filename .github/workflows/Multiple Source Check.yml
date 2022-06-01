@@ -148,10 +148,10 @@ jobs:
 
   New-Update-Files:
     needs: [Checkd]   
+    if: ${{ needs.Checkd.outputs.output != 'hello' }}
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
-      if: ${{ needs.Checkd.outputs.output != 'hello' }}
       uses: actions/checkout@main
     - name: Initialization environment
       env:
