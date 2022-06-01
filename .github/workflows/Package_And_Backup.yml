@@ -79,7 +79,8 @@ jobs:
         ENABLE_WIFI_K510: 0        
         GZIP_IMGS: .gz 
 
-    - name: Setup Debug Session
+    - name: Setup Debug Session 'touch /tmp/keepalivegit'
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
       uses: csexton/debugger-action@master
 
     - name: Rename Firmware and Rootfs for upload
@@ -168,6 +169,10 @@ jobs:
         ENABLE_WIFI_K510: 0        
         GZIP_IMGS: .gz
 
+    - name: Setup Debug Session 'touch /tmp/keepalivegit'
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
+      uses: csexton/debugger-action@master
+
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
@@ -255,6 +260,10 @@ jobs:
         ENABLE_WIFI_K510: 0        
         GZIP_IMGS: .gz
 
+    - name: Setup Debug Session 'touch /tmp/keepalivegit'
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
+      uses: csexton/debugger-action@master
+      
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
