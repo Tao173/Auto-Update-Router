@@ -210,7 +210,7 @@ jobs:
     env:
       REPO_URL: https://github.com/immortalwrt/immortalwrt
       REPO_BRANCH: openwrt-21.02    
-      VERSION: PLUS
+      VERSION: immortalwrt
       EXPLAIN: 这是Plus_immortalwrt版
       FILE_NAME: ROOTFS_Plus_Myself
       PRODUCT_NAME: ARMv8_Plus_Myself
@@ -263,7 +263,7 @@ jobs:
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
       uses: csexton/debugger-action@master
-      
+
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
@@ -297,9 +297,6 @@ jobs:
     env:
       REPO_URL: https://github.com/coolsnowwolf/lede
       REPO_BRANCH: master   
-      VERSION: Lienol
-      EXPLAIN: 这是Plus_Lienol版
-      PRODUCT_NAME: ARMv8_Plus
     steps:
     - name: Initialization environment
       env:
