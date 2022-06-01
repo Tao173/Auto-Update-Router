@@ -331,15 +331,12 @@ jobs:
         cp -RT  diy/files openwrt/files
         unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip
         rm -rf openwrt/files/etc/config.zip
+        sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/emortal/default-settings/files/99-default-settings
+        sed -i '/exit 0/d' package/emortal/default-settings/files/99-default-settings
+        cat diy/mydefault >> package/emortal/default-settings/files/99-default-settings
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-
-    - name: Judge password
-      if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false') 
-      run: |
-        cd openwrt
-        sed -i 's?root::0:0:99999:7:::?root:$1$4STyeJSm$/0KUZMiQA2TQbY1lWxLr8.:19144:0:99999:7:::?' package/emortal/default-settings/files/99-default-settings
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 

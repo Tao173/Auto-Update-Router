@@ -14,7 +14,8 @@ sed -i 's/192.168.1.1/192.168.124.38/g' package/base-files/files/bin/config_gene
 # sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' package/lean/autocore/Makefile
 
 #2. 取消首次登陆WEB页密码 设置ttyd免帐号登录
-# sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/lean/default-settings/files/zzz-default-settings
+#sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/default-settings/files/zzz-default-settings
+sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root::0:0:99999:7:::/' package/default-settings/files/zzz-default-settings
 sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
 sed -i "s/-SNAPSHOT/-Lienol/g" package/default-settings/files/zzz-default-settings
 
