@@ -99,20 +99,16 @@ jobs:
       uses: ncipollo/release-action@v1
       if: env.PACKAGED_STATUS == 'success' && !cancelled()
       with:
-        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        name: OpenWrt ${{ env.PRODUCT_NAME }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         replacesArtifacts: true
         tag: ${{ env.PRODUCT_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          **This is OpenWrt firmware for Armvirt 64**
-          * ${{ env.EXPLAIN }}
-          默认 IP：10.10.10.10 默认密码：无
-          安装到 EMMC：系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
-          升级 OpenWrt：系统 → 晶晨宝盒 → 手动上传更新 或者 在线下载更新
-          当前使用版本:【编译前的最后一次➦[主源码](https://github.com/coolsnowwolf/lede)更新记录】
-          ${{ env.useVersionInfo }}
+          ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Lienol](https://github.com/Lienol)      内核:[Myself](https://github.com/Tao173/compile-kernel)
+          * ❌❌❌禁止❌❌❌使用❌❌❌
+          * ❗包含大量个性化配置，使用自编译内核，可能极不稳定，无法直接使用❗
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////
   Package-for-Le:
@@ -189,20 +185,16 @@ jobs:
       uses: ncipollo/release-action@v1
       if: env.PACKAGED_STATUS == 'success' && !cancelled()
       with:
-        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        name: OpenWrt ${{ env.PRODUCT_NAME }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         replacesArtifacts: true
         tag: ${{ env.PRODUCT_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          **This is OpenWrt firmware for Armvirt 64**
-          * ${{ env.EXPLAIN }}
-          默认 IP：10.10.10.10 默认密码：无
-          安装到 EMMC：系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
-          升级 OpenWrt：系统 → 晶晨宝盒 → 手动上传更新 或者 在线下载更新
-          当前使用版本:【编译前的最后一次➦[主源码](https://github.com/coolsnowwolf/lede)更新记录】
-          ${{ env.useVersionInfo }}
+          ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Lean](https://github.com/coolsnowwolf)      内核:[Myself](https://github.com/Tao173/compile-kernel)
+          * ❌❌❌禁止❌❌❌使用❌❌❌
+          * ❗包含大量个性化配置，使用自编译内核，可能极不稳定，无法直接使用❗
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////          
   Package-for-Im:
@@ -280,15 +272,16 @@ jobs:
       uses: ncipollo/release-action@v1
       if: env.PACKAGED_STATUS == 'success' && !cancelled()
       with:
-        name: OpenWrt ${{ env.DATE }} for ${{ env.PRODUCT_NAME }}
+        name: OpenWrt ${{ env.PRODUCT_NAME }}
         artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
         allowUpdates: true
         replacesArtifacts: true
         tag: ${{ env.PRODUCT_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          **This is OpenWrt firmware for Armvirt 64**
-          * ${{ env.EXPLAIN }}
+          ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)      内核:[Myself](https://github.com/Tao173/compile-kernel)
+          * ❌❌❌禁止❌❌❌使用❌❌❌
+          * ❗包含大量个性化配置，使用自编译内核，可能极不稳定，无法直接使用❗
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////
   Backuptocloud189:
     if: ${{ always() }}
