@@ -185,7 +185,7 @@ jobs:
         tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          ** 打包时间:🕛 ${{ env.DATE }}
+          ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)  
           * 这是 ARMv8_Lienol plus打包临时固件，不可直刷
           直刷固件参见 Tag 名为 ${{ env.PRODUCT_NAME }} 的 Releases
           当前使用版本:【编译前的最后一次[➦主源码](https://github.com/immortalwrt/immortalwrt)更新记录】
@@ -232,7 +232,7 @@ jobs:
         tag: ${{ env.PRODUCT_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          ** 打包时间:🕛 ${{ env.DATE }}  🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)  内核:[ophub](https://github.com/ophub/kernel)
+          ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)      内核:[ophub](https://github.com/ophub/kernel)
           * 这是 ARMv8 PLUS版本 ，集成一些日常常用插件
           默认 IP：192.168.124.38 默认密码：无/password
           安装到 EMMC：系统 → 晶晨宝盒 → 安装 OpenWrt → 选择型号 → 安装
@@ -423,7 +423,7 @@ jobs:
         tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          ** 打包时间:🕛${{ env.DATE }}  🤵源码作者:[Immortalwrt](https://github.com/immortalwrt)
+          ** 打包时间:🕛${{ env.DATE }}      🤵源码作者:[Immortalwrt](https://github.com/immortalwrt)
           * 自用底包          
           * ❌❌❌禁止❌❌❌使用❌❌❌
           * ❗包含大量个性化配置，使用自编译内核，可能极不稳定，无法直接使用❗
@@ -469,7 +469,7 @@ jobs:
         tag: ${{ env.PRODUCT_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          ** 打包时间:🕛 ${{ env.DATE }}  🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)  内核:[Myself](https://github.com/Tao173/compile-kernel)
+          ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)      内核:[Myself](https://github.com/Tao173/compile-kernel)
           * ❌❌❌禁止❌❌❌使用❌❌❌
           * ❗包含大量个性化配置，使用自编译内核，可能极不稳定，无法直接使用❗
                    
