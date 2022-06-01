@@ -83,12 +83,12 @@ sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a
 sed -i "/<%= ver.distversion %>/d" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
 #web概览修改
 sed -i "s/ + cpubench.cpubench//g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')??g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')??g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 #修改cpucore
 sed -i "s/ + cpubench.cpubench//g" package/emortal/autocore/files/generic/10_system.js
-sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')??g" package/emortal/autocore/files/generic/10_system.js
-sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')??g" package/emortal/autocore/files/generic/10_system.js
+sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description + '  ' : '')?g" package/emortal/autocore/files/generic/10_system.js
+sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description + '  ' : '')?g" package/emortal/autocore/files/generic/10_system.js
 #去除固件版本小尾巴
 #sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 #修改web页面内核信息(菜鸟转义)
