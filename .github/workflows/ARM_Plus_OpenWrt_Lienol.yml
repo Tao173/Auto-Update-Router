@@ -448,7 +448,6 @@ jobs:
         ENABLE_WIFI_K510: 0
         GZIP_IMGS: .gz
 
-
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename

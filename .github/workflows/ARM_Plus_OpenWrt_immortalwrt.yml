@@ -98,7 +98,6 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_P2_SH
         
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
-      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
       uses: csexton/debugger-action@master
 
     - name: Upload files to release
