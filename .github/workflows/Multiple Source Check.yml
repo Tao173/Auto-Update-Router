@@ -198,7 +198,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         retain_days: 1
-        keep_minimum_runs: 1
+        keep_minimum_runs: 0
 
     - name: Telegram notification upload success
       if: ${{ needs.Checkd.outputs.output != 'hello' }}
