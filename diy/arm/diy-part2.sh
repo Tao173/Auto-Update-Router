@@ -62,7 +62,9 @@ svn co https://github.com/kenzok8/jell/luci-app-socat package/luci-app-socat
 svn co https://github.com/doushang/luci-app-shortcutmenu/trunk/luci-app-shortcutmenu package/luci-app-shortcutmenu
 # 增加shortcutmenu默认配置
 # curl -fsSL  https://raw.githubusercontent.com/Tao173/Auto-Update-Router/main/diy/shortcutmenu > ./package/luci-app-shortcutmenu/root/etc/config/shortcutmenu
-
+#phtunnel花生壳
+svn co https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/luci-app-phtunnel package/luci-app-phtunnel
+svn co https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/phtunnel package/phtunnel
 
 # 科学上网插件依赖
 svn co https://github.com/vernesong/OpenClash/trunk/luci-app-openclash package/luci-app-openclash

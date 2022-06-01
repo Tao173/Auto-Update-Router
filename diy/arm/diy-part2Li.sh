@@ -104,6 +104,9 @@ sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.re
 svn co https://github.com/QiuSimons/openwrt-mos/trunk/luci-app-mosdns package/luci-app-mosdns
 svn co https://github.com/QiuSimons/openwrt-mos/trunk/v2ray-geodata package/v2ray-geodata
 svn co https://github.com/QiuSimons/openwrt-mos/trunk/mosdns package/mosdns
+#phtunnel花生壳
+svn co https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/luci-app-phtunnel package/luci-app-phtunnel
+svn co https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/phtunnel package/phtunnel
 
 # DDNS.to
 svn co https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-ddnsto package/luci-app-ddnsto
