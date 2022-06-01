@@ -20,7 +20,9 @@ on:
         description: '⚡ Just ⚡ For ⚠ Myself ⚠'
         required: false
         default: 'true'
-
+  push:
+    paths:
+      - 'diy-part2Li.sh'
 jobs:
   buildone:
     runs-on: ubuntu-20.04

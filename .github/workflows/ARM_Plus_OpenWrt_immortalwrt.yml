@@ -20,6 +20,9 @@ on:
         description: '⚡ Just ⚡ For ⚠ Myself ⚠'
         required: false
         default: 'true'
+  push:
+    paths:
+      - 'diy-part2im.sh'
 
 jobs:
   buildone:
