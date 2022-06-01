@@ -180,7 +180,6 @@ jobs:
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////
   Plus-NanoPi-R2S-Lean:
-    needs: [Plus-NanoPi-R2C-Lean]  
     runs-on: ubuntu-20.04
     env:
       VERSION: Plus_NanoPi_R2S_Lean
@@ -334,7 +333,6 @@ jobs:
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////
   Plus-NanoPi-R4S-Lean: 
-    needs: [Plus-NanoPi-R2S-Lean]  
     runs-on: ubuntu-20.04
     env:
       VERSION: Plus_NanoPi_R4S_Lean
