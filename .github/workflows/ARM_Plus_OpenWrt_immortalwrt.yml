@@ -332,11 +332,11 @@ jobs:
         unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip
         rm -rf openwrt/files/etc/config.zip
         chmod +x $DIY_P2_SH
-        cd openwrt
+        cd openwrt       
+        $GITHUB_WORKSPACE/$DIY_P2_SH
         sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/emortal/default-settings/files/99-default-settings
         sed -i '/exit 0/d' package/emortal/default-settings/files/99-default-settings
-        cat files/mydefault >> package/emortal/default-settings/files/99-default-settings        
-        $GITHUB_WORKSPACE/$DIY_P2_SH
+        cat files/mydefault >> package/emortal/default-settings/files/99-default-settings         
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
