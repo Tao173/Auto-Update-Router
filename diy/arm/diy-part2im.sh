@@ -82,7 +82,7 @@ sed -i "s|(<%= ver.luciversion %>)||g" feeds/luci/themes/*/luasrc/view/themes/*/
 sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a>|g" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
 sed -i "/<%= ver.distversion %>/d" feeds/luci/themes/*/luasrc/view/themes/*/footer_login.htm
 #web概览修改
-sed -i "s/ + cpubench.cpubench//g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s| + cpubench.cpubench||g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 #修改cpucore

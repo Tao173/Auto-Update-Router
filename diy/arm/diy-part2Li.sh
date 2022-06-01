@@ -83,15 +83,14 @@ sed -i "/<%= ver.distversion %>/d" package/luci-theme-argon/luasrc/view/themes/*
 sed -i "s|(<%= ver.luciversion %>)||g" package/luci-theme-argon/luasrc/view/themes/*/footer_login.htm
 sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a>|g" package/luci-theme-argon/luasrc/view/themes/*/footer_login.htm
 sed -i "/<%= ver.distversion %>/d" package/luci-theme-argon/luasrc/view/themes/*/footer_login.htm
-sed -i "s/(luciversion || '')/(boardinfo.kernel)/g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 #去除固件版本小尾巴
 #sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 #修改web页面内核信息(菜鸟转义)
 #sed -i 's?unameinfo.release?luci.sys.exec("cat /etc/flippy-openwrt-release | grep \\"KERNEL_VERSION=5\\" | cut -d \\"=\\" \\-f 2")?g' feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 #web概览修改
-sed -i "s/ + cpubench.cpubench//g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description + '  ' : '')?g" 10_system.js
-sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description + '  ' : '')?g" 10_system.js
+sed -i "s| + cpubench.cpubench||g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 
 
 # # 晶晨宝盒软件固件升级地址
