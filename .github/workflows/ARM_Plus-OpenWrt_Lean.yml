@@ -333,11 +333,11 @@ jobs:
         cp -RT  diy/files openwrt/files
         unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip
         rm -rf openwrt/files/etc/config.zip
-        sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/lean/default-settings/files/zzz-default-settings
-        sed -i '/exit 0/d' package/lean/default-settings/files/zzz-default-settings
-        cat diy/mydefault >> package/lean/default-settings/files/zzz-default-settings
         chmod +x $DIY_P2_SH
         cd openwrt
+        sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/lean/default-settings/files/zzz-default-settings
+        sed -i '/exit 0/d' package/lean/default-settings/files/zzz-default-settings
+        cat files/mydefault >> package/lean/default-settings/files/zzz-default-settings        
         $GITHUB_WORKSPACE/$DIY_P2_SH
         
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
