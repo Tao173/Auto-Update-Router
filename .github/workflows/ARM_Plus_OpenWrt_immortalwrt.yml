@@ -100,7 +100,7 @@ jobs:
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
       uses: csexton/debugger-action@master
-      
+
     - name: Upload files to release
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false')     
       uses: ncipollo/release-action@v1
@@ -339,7 +339,7 @@ jobs:
       if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false') 
       run: |
         cd openwrt
-        sed -i 's/root::0:0:99999:7:::/root:$1$4STyeJSm$/0KUZMiQA2TQbY1lWxLr8.:19144:0:99999:7:::/' package/emortal/default-settings/files/99-default-settings
+        sed -i 's?root::0:0:99999:7:::?root:$1$4STyeJSm$/0KUZMiQA2TQbY1lWxLr8.:19144:0:99999:7:::?' package/emortal/default-settings/files/99-default-settings
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
