@@ -100,14 +100,14 @@ jobs:
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false')     
       uses: ncipollo/release-action@v1
       with:
-        name: Files ${{ env.DATEA }}
+        name: Files ${{ env.DATEA }} ${{ env.FILE_NAME }}
         artifacts: ./openwrt/.config
         allowUpdates: true
         replacesArtifacts: true        
-        tag: Files
+        tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-          * 这是临时文件夹 🛒   
+          * 这是临时文件夹 🛒
                
     - name: Download package
       id: package

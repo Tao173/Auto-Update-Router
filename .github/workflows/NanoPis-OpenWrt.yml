@@ -97,7 +97,7 @@ jobs:
         artifacts: ./openwrt/.config
         allowUpdates: true
         replacesArtifacts: true        
-        tag: Files
+        tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
           * 这是临时文件夹 🛒
@@ -251,7 +251,7 @@ jobs:
         artifacts: ./openwrt/.config
         allowUpdates: true
         replacesArtifacts: true        
-        tag: Files
+        tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
           * 这是临时文件夹 🛒
@@ -406,7 +406,7 @@ jobs:
         artifacts: ./openwrt/.config
         allowUpdates: true
         replacesArtifacts: true        
-        tag: Files
+        tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
           * 这是临时文件夹 🛒

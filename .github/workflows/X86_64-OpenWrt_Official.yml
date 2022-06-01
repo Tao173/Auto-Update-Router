@@ -90,7 +90,8 @@ jobs:
         name: Files ${{ env.DATEA }} ${{ env.FILE_NAME }}
         artifacts: ./openwrt/.config
         allowUpdates: true
-        tag: Files
+        replacesArtifacts: true        
+        tag: ${{ env.FILE_NAME }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
           * 这是临时文件夹 🛒
