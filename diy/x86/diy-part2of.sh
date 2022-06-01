@@ -17,7 +17,6 @@ sed -i 's/OpenWrt/OpenWrt-Tao/g' package/base-files/files/bin/config_generate
 # sed -i 's/UTC/UTC+8/g' package/base-files/files/bin/config_generate
 
 # 移除重复软件包
-rm -rf feeds/packages/net/mosdns
 rm -rf feeds/packages/admin/netdata
 rm -rf package/lean/luci-app-dockerman
 rm -rf feeds/luci/themes/luci-theme-argon
@@ -80,12 +79,6 @@ sed -i "/(<%= ver.luciversion %>)<\/a> \//d" package/luci-theme-argon/luasrc/vie
 #去除固件版本小尾巴
 #sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 sed -i "s| + (luciversion \|\| '')||g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-
-
-# MosDNS
-svn co https://github.com/QiuSimons/openwrt-mos/trunk/luci-app-mosdns package/luci-app-mosdns
-svn co https://github.com/QiuSimons/openwrt-mos/trunk/v2ray-geodata package/v2ray-geodata
-svn co https://github.com/QiuSimons/openwrt-mos/trunk/mosdns package/mosdns
 
 # DDNS.to& # 易有云
 svn co https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-ddnsto package/luci-app-ddnsto
