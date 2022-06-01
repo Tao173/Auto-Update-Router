@@ -31,7 +31,8 @@ jobs:
       REPO_BRANCH: 21.02    
       VERSION: Lienol
       EXPLAIN: 这是Plus_Lienol版
-      PRODUCT_NAME: ARMv8_Plus
+      FILE_NAME: ROOTFS_Plus_Myself
+      PRODUCT_NAME: ARMv8_Plus_Myself
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -60,9 +61,9 @@ jobs:
 
     - name: Download Basepackages
       run: |
-        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Myself/immortalwrt-armvirt-64-default-rootfs.tar.gz
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/${{ env.FILE_NAME }}/${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
         sudo apt install rename
-        rename "s/immortalwrt/openwrt/" openwrt-armvirt-64-default-rootfs.tar.gz
+        rename "s/${{ env.VERSION }}/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
         
     - name: Package armvirt as openwrt
       uses: Tao173/Auto-Update-Router@master
@@ -120,7 +121,8 @@ jobs:
       REPO_BRANCH: master    
       VERSION: Lean
       EXPLAIN: 这是Plus_Lean版
-      PRODUCT_NAME: ARMv8_Plus
+      FILE_NAME: ROOTFS_Plus_Myself
+      PRODUCT_NAME: ARMv8_Plus_Myself
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -149,9 +151,9 @@ jobs:
 
     - name: Download Basepackages
       run: |
-        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Myself/Lean-armvirt-64-default-rootfs.tar.gz
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/${{ env.FILE_NAME }}/${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
         sudo apt install rename
-        rename "s/Lean/openwrt/" Lean-armvirt-64-default-rootfs.tar.gz
+        rename "s/${{ env.VERSION }}/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
 
     - name: Package armvirt as openwrt
       uses: Tao173/Auto-Update-Router@master
@@ -205,7 +207,8 @@ jobs:
       REPO_BRANCH: openwrt-21.02    
       VERSION: PLUS
       EXPLAIN: 这是Plus_immortalwrt版
-      PRODUCT_NAME: ARMv8_Plus
+      FILE_NAME: ROOTFS_Plus_Myself
+      PRODUCT_NAME: ARMv8_Plus_Myself
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -234,9 +237,9 @@ jobs:
 
     - name: Download Basepackages
       run: |
-        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/ROOTFS_Plus_Myself/Lienol-armvirt-64-default-rootfs.tar.gz
+        wget --no-check-certificate https://github.com/Tao173/Auto-Update-Router/releases/download/${{ env.FILE_NAME }}/${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
         sudo apt install rename
-        rename "s/Lienol/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
+        rename "s/${{ env.VERSION }}/openwrt/" ${{ env.VERSION }}-armvirt-64-default-rootfs.tar.gz
 
     - name: Package armvirt as openwrt
       uses: Tao173/Auto-Update-Router@master
