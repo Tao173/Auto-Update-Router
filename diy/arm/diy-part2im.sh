@@ -23,7 +23,6 @@ sed -i 's/192.168.1.1/192.168.124.38/g' package/base-files/files/bin/config_gene
 
 #2. 取消首次登陆WEB页密码 设置ttyd免帐号登录
 sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root::0:0:99999:7:::/' package/emortal/default-settings/files/99-default-settings
-sed -i 's/root::0:0:99999:7:::/root:$1$4STyeJSm$/0KUZMiQA2TQbY1lWxLr8.:19144:0:99999:7:::/' package/emortal/default-settings/files/99-default-settings
 sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
 #sed -i "s|'OpenWrt 21.02-SNAPSHOT'|'OpenWrt 21.02-Lienol'|g" package/default-settings/files/zzz-default-settings
 
