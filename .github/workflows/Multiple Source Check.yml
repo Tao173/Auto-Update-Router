@@ -24,6 +24,8 @@ jobs:
     env:
       REPO_URL: https://github.com/coolsnowwolf/lede
       REPO_BRANCH: master
+    outputs:
+      output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
     - name: Get Commit Hash
       id: getHash
@@ -37,7 +39,11 @@ jobs:
       with:
         path: .commitHasha
         key: HEAD-${{ steps.getHash.outputs.commitHasha }}
-
+    - name: Set output for next job
+      id: outputunifreq
+      if: steps.cacheHash.outputs.cache-hit == 'true'
+      run: |
+        echo "::set-output name=unifreq::hello"
     - name: Save New Commit Hash
       if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
@@ -54,6 +60,8 @@ jobs:
     env:
       REPO_URL: https://github.com/Lienol/openwrt
       REPO_BRANCH: 21.02
+    outputs:
+      output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
     - name: Get Commit Hash
       id: getHash
@@ -67,7 +75,11 @@ jobs:
       with:
         path: .commitHash
         key: HEAD-${{ steps.getHash.outputs.commitHashb }}
-
+    - name: Set output for next job
+      id: outputunifreq
+      if: steps.cacheHash.outputs.cache-hit == 'true'
+      run: |
+        echo "::set-output name=unifreq::hello"
     - name: Save New Commit Hash
       if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
@@ -84,6 +96,8 @@ jobs:
     env:
       REPO_URL: https://github.com/immortalwrt/immortalwrt
       REPO_BRANCH: openwrt-21.02
+    outputs:
+      output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
     - name: Get Commit Hash
       id: getHash
@@ -97,7 +111,11 @@ jobs:
       with:
         path: .commitHash
         key: HEAD-${{ steps.getHash.outputs.commitHashc }}
-
+    - name: Set output for next job
+      id: outputunifreq
+      if: steps.cacheHash.outputs.cache-hit == 'true'
+      run: |
+        echo "::set-output name=unifreq::hello"
     - name: Save New Commit Hash
       if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
@@ -147,8 +165,8 @@ jobs:
         event-type: Unifreq Source Code Update
 
   New-Update-Files:
-    needs: [Checkd]   
-    if: ${{ needs.Checkd.outputs.output != 'hello' }}
+    needs: [Checka, Checkb,Checkc, Checkd]   
+    if: ${{ needs.Checka.outputs.output != 'hello' }} && ${{ needs.Checkb.outputs.output != 'hello' }} && ${{ needs.Checkc.outputs.output != 'hello' }} && ${{ needs.Checkd.outputs.output != 'hello' }}
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout

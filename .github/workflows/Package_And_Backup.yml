@@ -314,7 +314,7 @@ jobs:
         echo "hash=$Hash" >> $GITHUB_ENV
         echo "DATEA=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
         echo "nametag=${{ github.event.inputs.upload }}" >> $GITHUB_ENV
-  
+
     - name: Release Downloader ARMv8_Plus_Myself
       if: (github.event.inputs.upload != 'root') 
       uses: robinraju/release-downloader@v1.3
@@ -366,9 +366,11 @@ jobs:
         unzip -j cloudgo.zip
         rm -rf README.md && rm -rf LICENSE
         ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
-        ./cloudpan189-go u Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt
-        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloudpan189-go u Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt  | tee backgo1.log
+        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt  | tee backgo2.log
         ./cloudpan189-go logout -y
+        echo "judgego1=$(grep -rl '失败' . --include=backgo1.log)" >> $GITHUB_ENV
+        echo "judgego2=$(grep -rl '失败' . --include=backgo2.log)" >> $GITHUB_ENV
         echo "::set-output name=status::success"
 
     - name: backup to cloud189
@@ -380,19 +382,32 @@ jobs:
         tar -zxvf cloud.tar.gz
         rm -rf README.md && rm -rf LICENSE
         ./cloud189 login -i ${{ secrets.NAME }} ${{ secrets.PASS }}
-        ./cloud189 up Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt
-        ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
+        ./cloud189 up Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt  | tee back1.log
+        ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt  | tee back2.log
         ./cloud189 logout -f
+        echo "judge1=$(grep -rl '失败' . --include=back1.log)" >> $GITHUB_ENV
+        echo "judge2=$(grep -rl '失败' . --include=back2.log)" >> $GITHUB_ENV        
+        echo "::set-output name=status::success"
+
+    - name: Judje one
+      id: judgeone
+      if: env.judgego1 == 'backgo1.log' || env.judge1 == 'back1.log'
+      run: |   
+        echo "::set-output name=status::success"
+    - name: Judje two
+      id: judgetwo
+      if: env.judgego2 == 'backgo2.log' || env.judge2 == 'back2.log'
+      run: |   
         echo "::set-output name=status::success"
 
     - name: Telegram notification
-      if: steps.cloud189go.outputs.status == 'success'
+      if: steps.judgeone.outputs.status == 'success'
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
-          自用固件上传天翼云盘完成。使用cloud189go程序。
+          Auto-Update-Router上传天翼云盘完成。
           编译时间：${{ env.DATE }}
           更新信息：
           作者: ${{ env.author }}
@@ -401,13 +416,13 @@ jobs:
           hash: ${{ env.hash }}
           以上信息来自Lean源码提交记录
     - name: Telegram notification
-      if: steps.cloud189.outputs.status == 'success'
+      if: steps.judgetwo.outputs.status == 'success'
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
-          自用固件上传天翼云盘完成。使用cloud189程序。
+          自用固件上传天翼云盘完成。
           编译时间：${{ env.DATE }}
           更新信息：
           作者: ${{ env.author }}
