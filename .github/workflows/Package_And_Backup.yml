@@ -77,7 +77,7 @@ jobs:
         OPENWRT_VER: ${{env.REPO_BRANCH}}
         ENABLE_WIFI_K504: 0
         ENABLE_WIFI_K510: 0        
-        GZIP_IMGS: .gz 
+        GZIP_IMGS: .7z
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
@@ -163,7 +163,7 @@ jobs:
         WHOAMI: Tao
         ENABLE_WIFI_K504: 0
         ENABLE_WIFI_K510: 0        
-        GZIP_IMGS: .gz
+        GZIP_IMGS: .zip
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
