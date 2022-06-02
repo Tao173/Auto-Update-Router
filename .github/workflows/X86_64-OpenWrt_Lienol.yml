@@ -86,7 +86,7 @@ jobs:
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false')     
       uses: ncipollo/release-action@v1
       with:
-        name: Files ${{ env.DATEA }} ${{ env.FILE_NAME }}
+        name: OpenWrt for ${{ env.FILE_NAME }}
         artifacts: ./openwrt/.config
         allowUpdates: true
         replacesArtifacts: true        
