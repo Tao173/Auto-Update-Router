@@ -9,7 +9,7 @@ name: NanoPi_R4S_R2C_R2S OpenWrt
 
 on:
   schedule:
-    - cron: '* 17 * * *' 
+    - cron: '0 0 * * 0' 
   workflow_dispatch:
     inputs:
       ssh:
