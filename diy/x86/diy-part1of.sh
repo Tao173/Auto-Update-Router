@@ -1,15 +1,14 @@
-#!/bin/bash
-#===============================================
-# Description: DIY script part 1
-# File name: diy-part1.sh
-# Lisence: MIT
-# Author: P3TERX
-# Blog: https://p3terx.com
-#===============================================
+#/bin/bash
+# This is free software, lisence use MIT.
+# Copyright (C) https://github.com/yfdoor
 
-# Uncomment a feed source
-#sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
+# Define My Package
+git clone https://github.com/yfdoor/OpenWrt-Packages.git          package/yfdoorg
 
-# Add a feed source
-#echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
-#echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >>feeds.conf.default
+# Fix Lean's package
+if [ $REPO_URL != "https://github.com/coolsnowwolf/lede.git" ]; then   
+    mkdir -p tools/ucl && wget -P tools/ucl https://raw.githubusercontent.com/coolsnowwolf/lede/master/tools/ucl/Makefile          
+    mkdir -p tools/upx && wget -P tools/upx https://raw.githubusercontent.com/coolsnowwolf/lede/master/tools/upx/Makefile
+    sed -i '23a\tools-y += ucl upx' tools/Makefile
+    sed -i '/builddir dependencies/a\$(curdir)/upx/compile := $(curdir)/ucl/compile' tools/Makefile
+fi

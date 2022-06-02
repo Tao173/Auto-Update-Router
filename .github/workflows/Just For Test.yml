@@ -1,143 +1,280 @@
-#===============================================
-# Description: Build OpenWrt
-# Lisence: MIT
-# Original Author: P3TERX
-# DIY: Tao173 
-#===============================================
+# This is free software, lisence use MIT.
+# Copyright (C) https://github.com/yfdoor
+#
+# https://github.com/yfdoor/OpenWrt
+# Description: GitHub Actions for OpenWrt Build
 
-name: Just For Test
+name: OpenWrt-Build
 
+# 触发条件
 on:
+  #  push:
+  #    branches:
+  #      - master
+  #    paths:
+  #      - '.config'
   workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH Connection To Actions?'
+        required: false
+        default: 'false'
+  #watch:
+  #   types: started
 
+# 环境定义
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  FEEDS_CONF: diy/arm/feeds.conf.default
-  CONFIG_FILE: diy/arm/.config
-  DIY_P1_SH: diy/arm/diy-part1.sh
-  DIY_P2_SH: diy/arm/diy-part2.sh
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: false
+  #####################################################
+  #####   1：编译官方源码
+  #####   2：编译第三方源码
+  #####   3：编译官方源码 & 第三方 Package
+  #####################################################
+  REPO_URL: https://github.com/openwrt/openwrt.git
+  REPO_BRANCH: v21.02.3
+  CONF_FILE: diy/x86/of.config
+  DIY_P1_SH: diy/x86/diy-part1of.sh
+  DIY_P2_SH: diy/x86/diy-part2of.sh
+  SSH_ACTION: false
+  UPLOAD_BRANCH: true
+  UPLOAD_BIN_DIR: true
+  UPLOAD_FIRMWARE: true
+  UPLOAD_COWTRANSFER: false
+  UPLOAD_WETRANSFER: true
   UPLOAD_RELEASE: true
-  UPLOAD_189: true
+  FILE_NAME: X86_64_OFFICIAL
   TZ: Asia/Shanghai
-  FILE_NAME: Just_For_Test
-  PRODUCT_NAME: Just_For_Test
+  #####################################################
 
 jobs:
-  buildtwo:
+  build:
     runs-on: ubuntu-20.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
     steps:
-    - name: Initialization environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo timedatectl set-timezone "$TZ"
-        sudo mkdir -p /workdir
-        sudo chown $USER:$GROUPS /workdir
-    - name: Clone source code
-      working-directory: /workdir
-      run: |
-        df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
-        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-        cd openwrt
-        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
-        Author=$(git show -s --date=short --format="Author: %an")
-        Date=$(git show -s --date=short --format="date: %cd")
-        Commit=$(git show -s --date=short --format="commit: %s")
-        Hash=$(git show -s --date=short --format="commit hash: %h")
-        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
-        echo "author=$Author" >> $GITHUB_ENV
-        echo "date=$Date" >> $GITHUB_ENV
-        echo "commit=$Commit" >> $GITHUB_ENV
-        echo "hash=$Hash" >> $GITHUB_ENV
-        echo "DATEA=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
-        ${{ env.hash }}
-        echo "nametag=${{ github.event.inputs.upload }}" >> $GITHUB_ENV
+      # 项目初始
+      - name: Code Checkout
+        uses: actions/checkout@main
+
+      # 初始环境
+      - name: Initialize Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo -E apt-get update
+          sudo -E apt-get -y install $(curl -fsSL git.io/depends-ubuntu-2004)
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          sudo timedatectl set-timezone "$TZ" 
+          
+          echo "========================================"
+          echo "[Space Usage]:"
+          echo "========================================"
+          df -hT
+          echo "========================================"
+          echo "[File List]:" 
+          echo "========================================"
+          echo "Current Path:" $PWD
+          ls -l -A
+          echo "========================================"
+          
+     # 下载源码
+      - name: Clone Code
+        run: |
+          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+
+      # 自定插件
+      - name: Download My Package
+        run: |
+          chmod +x script/$DIY0_FILE
+          cd openwrt
+          ../script/$DIY0_FILE          
   
-    - name: Release Downloader ARMv8_Plus_Myself
-      uses: robinraju/release-downloader@v1.3
-      with:
-        repository: "Tao173/Auto-Update-Router"
-        out-file-path: "./Download"
-        tag: "ARMv8_Plus_Myself"
-        fileName: "*"
+      # 更新Feed
+      - name: Update Feeds
+        run: |
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a      
+          
+      # 配置文件
+      - name: Config File
+        run: |
+          chmod +x script/$DIY1_FILE
+          [ -e files ] && cp -r -f files openwrt/files
+          [ -e config.d/$CONF_FILE ] && cp -r -f config.d/$CONF_FILE openwrt/.config
+          cd openwrt
+          ../script/$DIY1_FILE
 
-    - name: Release Downloader ROOTFS_Plus_Myself
-      uses: robinraju/release-downloader@v1.3
-      with:
-        repository: "Tao173/Auto-Update-Router"
-        out-file-path: "./Download"
-        tag: "ROOTFS_Plus_Myself"
-        fileName: "*"
+      # SSH连接
+      - name: SSH Connection
+        uses: P3TERX/ssh2actions@v1.0.0
+        if: env.SSH_ACTION == 'true'
+        env:
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
-    - name: Select a version rootfs
-      if: (github.event.inputs.upload == 'root' && github.event.inputs.upload != 'all') 
-      run: |   
-        cd ./Download
-        ls -l |grep -v img | awk '{print $9}'  | xargs rm -fr
+      # 下载依赖
+      - name: Make Download
+        run: |
+          cd openwrt
+          make defconfig
+          make download -j8
+          find dl/ -size -1024c -exec rm -f {} \;
+      - name: Setup Debug Session 'touch /tmp/keepalivegit'
+        uses: csexton/debugger-action@master
+  
+      - name: Upload files to release    
+        uses: ncipollo/release-action@v1
+        with:
+          name: OpenWrt for ${{ env.FILE_NAME }}
+          artifacts: ./openwrt/.config
+          allowUpdates: true
+          replacesArtifacts: true        
+          tag: ${{ env.FILE_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            * 这是临时文件夹 🛒
+      # 编译固件
+      - name: Compile Firmware
+        id: compile
+        run: |
+          cd openwrt
+          echo -e "$(nproc) thread compile"
+          make -j$(nproc) || make -j1 || make -j1 V=s
+          
+          echo "========================================"
+          echo "[Space Usage]:"
+          echo "========================================"
+          df -hT
+          echo "========================================"
+          echo "[File List]:" 
+          echo "========================================"
+          echo "Current Path:" $PWD
+          ls -l -A
+          echo "========================================"
+          
+          grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+          [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
+          echo "RELEASE_DATE=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
+          
+          echo "::set-output name=status::success"          
 
-    - name: Select a version Lean
-      if: (github.event.inputs.upload == 'lean' && github.event.inputs.upload != 'all') 
-      run: |   
-        cd ./Download
-        ls -l |grep -v Lean | awk '{print $9}'  | xargs rm -fr
+     # 更新分支
+      - name: Upload Branch
+        if: env.UPLOAD_BRANCH == 'true' && steps.compile.outputs.status == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        run: |
+          cd openwrt/bin
+          git init
+          git config user.name "yfdoor"
+          git config user.email "yfdoor@github.com"
+          git add .
+          git commit -m "Update OpenWrt_"$CONF_FILE
+          git push --force --quiet https://$GITHUB_TOKEN@github.com/yfdoor/OpenWrt.git HEAD:OpenWrt_$CONF_FILE
+          rm -rf .git
 
-    - name: Select a version Immortalwrt
-      if: (github.event.inputs.upload == 'immortalwrt' && github.event.inputs.upload != 'all') 
-      run: |   
-        cd ./Download
-        ls -l |grep -v immortalwrt | awk '{print $9}'  | xargs rm -fr
+      # 上传 Bin
+      - name: Upload Bin Directory
+        uses: actions/upload-artifact@main
+        if: env.UPLOAD_BIN_DIR == 'true' && steps.compile.outputs.status == 'success'
+        with:
+          name: OpenWrt_Bin_${{ env.DEVICE_NAME }}_${{ env.RELEASE_DATE }}
+          path: openwrt/bin
+          
+      # 准备固件
+      - name: Organize Firmware
+        id: organize
+        if: steps.compile.outputs.status == 'success' && !cancelled()
+        run: |    
+          cd openwrt/bin/targets/*/*
+          rm -rf packages
+          
+          echo "========================================"
+          echo "[Space Usage]:"
+          echo "========================================"
+          df -hT
+          echo "========================================"
+          echo "[File List]:" 
+          echo "========================================"
+          echo "Current Path:" $PWD
+          ls -l -A
+          echo "========================================"
+          
+          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+          echo "::set-output name=status::success"
 
-    - name: Select a version Lienol
-      if: (github.event.inputs.upload == 'lienol' && github.event.inputs.upload != 'all') 
-      run: |   
-        cd ./Download
-        ls -l |grep -v Lienol | awk '{print $9}'  | xargs rm -fr     
-
-    - name: Zip Firmware For Upload
-      id: zip
-      run: |
-        tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
-
-    - name: backup to cloud189
-      if: steps.cloud189go.outputs.status != 'success' && !cancelled()
-      id: cloud189
-      timeout-minutes: 160
-      run: |
-        wget --no-check-certificate https://github.com/gowsp/cloud189/releases/download/$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | cut -d " " -f 1 )/cloud189_$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | wget -qO- -t1 -T2 "https://api.github.com/repos/gowsp/cloud189/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/v//g;s/ //g' )_linux_amd64.tar.gz -O cloud.tar.gz
-        tar -zxvf cloud.tar.gz
-        rm -rf README.md && rm -rf LICENSE
-        ./cloud189 login -i ${{ secrets.NAME }} ${{ secrets.PASS }}
-        ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
-        ./cloud189 logout -f
-        echo "::set-output name=status::success"
-
-    - name: backup to cloud189-go
-      id: cloud189go
-      timeout-minutes: 160
-      run: |
-        wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloudgo.zip
-        unzip -j cloudgo.zip
-        rm -rf README.md && rm -rf LICENSE
-        ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
-        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
-        ./cloudpan189-go logout -y
-        echo "::set-output name=status::success"
-
-    - name: Telegram notification
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: |
-          OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2自用固件上传天翼云盘完成
-          编译时间：${{ env.DATE }}
-          更新信息：
-          作者: ${{ env.author }}
-          时间: ${{ env.date }}
-          内容: ${{ env.commit }}
-          hash: ${{ env.hash }}
-
+      # 上传固件
+      - name: Upload Firmware
+        uses: actions/upload-artifact@main
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+        with:
+          name: OpenWrt_Firmware_${{ env.DEVICE_NAME }}_${{ env.RELEASE_DATE }}
+          path: ${{ env.FIRMWARE }}
+        
+    # 上传CowTransfer
+      - name: Upload to Cowtransfer
+        id: cowtransfer
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+        run: |
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
+          echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+          echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+        
+      # 上传WeTransfer
+      - name: Upload to WeTransfer
+        id: wetransfer
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+        run: |
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+      
+      # 生成发行
+      - name: Generate Release
+        id: tag
+        if: env.UPLOAD_RELEASE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
+        run: |
+          touch release.txt
+          cat >> release.txt << EOF    
+          1、源码：${{ env.REPO_URL }}
+          2、分支：${{ env.REPO_BRANCH }}
+          3、设备：${{ env.DEVICE_NAME }}
+          -- Build by YFDOOR with Github Actions on ${{ env.RELEASE_DATE }} for ${{ env.DEVICE_NAME }} device
+          
+          外链下载：
+          EOF
+          [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer Download (24hrs)](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+          [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer Download (7days)](${{ steps.wetransfer.outputs.url }})" >> release.txt          
+ 
+          echo "::set-output name=status::success"
+          
+      - name: Upload firmware to release
+        id: tag
+        uses: ncipollo/release-action@v1
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
+        with:
+          name: R${{ env.DATE }} for ${{ env.FILE_NAME }}
+          artifacts: ${{ env.FIRMWARE }}/*
+          allowUpdates: true
+          tag: ${{ env.FILE_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            **This is OpenWrt firmware for X86_64**
+            * 这是 X86_64 平台使用的 OpenWrt 固件
+            默认 IP：10.10.10.10 默认密码：password
+            当前使用版本:【编译前的最后一次[➦主源码](https://github.com/openwrt/openwrt/tree/openwrt-22.03)更新记录】
+            ${{ env.useVersionInfo }}
+          
+      # 清理发行
+      - name: Remove Old Release
+        uses: dev-drprasad/delete-older-releases@v0.1.0
+        if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        with:
+          keep_latest: 10
+          delete_tags: true
