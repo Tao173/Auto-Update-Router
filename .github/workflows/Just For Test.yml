@@ -86,9 +86,9 @@ jobs:
       # 自定插件
       - name: Download My Package
         run: |
-          chmod +x script/$DIY0_FILE
+          chmod +x $DIY0_FILE
           cd openwrt
-          ../script/$DIY0_FILE          
+          ../$DIY0_FILE          
   
       # 更新Feed
       - name: Update Feeds
@@ -100,11 +100,11 @@ jobs:
       # 配置文件
       - name: Config File
         run: |
-          chmod +x script/$DIY1_FILE
+          chmod +x $DIY1_FILE
           [ -e files ] && cp -r -f files openwrt/files
           [ -e config.d/$CONF_FILE ] && cp -r -f config.d/$CONF_FILE openwrt/.config
           cd openwrt
-          ../script/$DIY1_FILE
+          ../$DIY1_FILE
 
       # SSH连接
       - name: SSH Connection
