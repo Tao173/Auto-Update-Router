@@ -163,10 +163,46 @@ jobs:
       with:
         token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
         event-type: Unifreq Source Code Update
+  Checke:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/Tao173/compile-kernel
+      REPO_BRANCH: main
+    outputs:
+      output: ${{ steps.outputunifreq.outputs.unifreq }}        
+    steps:
+    - name: Get Commit Hash
+      id: getHash
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH ./e
+        cd d
+        echo "::set-output name=commitHashe::$(git rev-parse HEAD)"
+    - name: Compare Commit Hash
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: .commitHash
+        key: HEAD-${{ steps.getHash.outputs.commitHashe }}
+
+    - name: Set output for next job
+      id: outputunifreq
+      if: steps.cacheHash.outputs.cache-hit == 'true'
+      run: |
+        echo "::set-output name=unifreq::hello"
+    - name: Save New Commit Hash
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      run: |
+        echo ${{ steps.getHash.outputs.commitHashe }} | tee .commitHash
+    - name: Trigger build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+        event-type: Mykernel Update
 
   New-Update-Files:
     needs: [Checka, Checkb,Checkc, Checkd]   
-    if: ${{ needs.Checkd.outputs.output != 'hello' }}
+    if: ${{ needs.Checkd.outputs.output != 'hello' }} && ${{ needs.Checke.outputs.output != 'hello' }}
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
