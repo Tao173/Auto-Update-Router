@@ -25,10 +25,6 @@ sed -i "s/-SNAPSHOT/-Lienol/g" package/default-settings/files/zzz-default-settin
 # Hostname
 sed -i 's/OpenWrt/OpenWrt-Tao/g' package/base-files/files/bin/config_generate
 
-# Cpufreq
-sed -i 's/LUCI_DEPENDS.*/LUCI_DEPENDS:=\@\(arm\|\|aarch64\)/g' feeds/luci/applications/luci-app-cpufreq/Makefile
-sed -i 's/services/system/g' feeds/luci/applications/luci-app-cpufreq/luasrc/controller/cpufreq.lua
-
 # 移除lede内重复软件包
 rm -rf feeds/packages/net/mosdns
 #rm -rf feeds/packages/admin/netdata

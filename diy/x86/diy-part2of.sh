@@ -33,6 +33,13 @@ rm -rf feeds/luci/applications/luci-app-timecontrol
 rm -rf feeds/luci/applications/luci-app-usb-printer 
 rm -rf feeds/luci/applications/luci-app-wrtbwmon
 
+svn co https://github.com/ErikasMasaitis/MQTT_subscriber/trunk/luci-app-mqtt-sub package/luci-app-mqtt-sub
+
+svn co https://github.com/ErikasMasaitis/MQTT_subscriber/trunk/mqtt_subscriber package/mqtt_subscriber
+
+git clone https://github.com/khongpt/luci-app-zigbee2mqtt package/luci-app-zigbee2mqtt
+
+
 # 添加额外软件包
 git clone https://github.com/jerrykuku/lua-maxminddb.git package/lua-maxminddb
 git clone https://github.com/kongfl888/luci-app-adguardhome.git package/luci-app-adguardhome
