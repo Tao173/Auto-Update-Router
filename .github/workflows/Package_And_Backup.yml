@@ -354,6 +354,8 @@ jobs:
     - name: Zip Firmware & Rootfs For Upload
       id: zip
       run: |
+        git clone https://github.com/Tao173/Auto-Update-Router ./Auto-Update-Router
+        tar -cjvf Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2 ./Auto-Update-Router
         tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
 
     - name: backup to cloud189-go
@@ -364,6 +366,7 @@ jobs:
         unzip -j cloudgo.zip
         rm -rf README.md && rm -rf LICENSE
         ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
+        ./cloudpan189-go u Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt
         ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
         ./cloudpan189-go logout -y
         echo "::set-output name=status::success"
@@ -377,6 +380,7 @@ jobs:
         tar -zxvf cloud.tar.gz
         rm -rf README.md && rm -rf LICENSE
         ./cloud189 login -i ${{ secrets.NAME }} ${{ secrets.PASS }}
+        ./cloud189 up Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt
         ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt
         ./cloud189 logout -f
         echo "::set-output name=status::success"
