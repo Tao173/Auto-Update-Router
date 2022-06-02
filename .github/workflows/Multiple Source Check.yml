@@ -63,6 +63,9 @@ jobs:
     outputs:
       output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
+    - name: Sleep for 60 seconds
+      run: sleep 60s
+      shell: bash    
     - name: Get Commit Hash
       id: getHash
       run: |
@@ -99,6 +102,9 @@ jobs:
     outputs:
       output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
+    - name: Sleep for 120 seconds
+      run: sleep 120s
+      shell: bash 
     - name: Get Commit Hash
       id: getHash
       run: |
@@ -135,6 +141,9 @@ jobs:
     outputs:
       output: ${{ steps.outputunifreq.outputs.unifreq }}        
     steps:
+    - name: Sleep for 180 seconds
+      run: sleep 180s
+      shell: bash 
     - name: Get Commit Hash
       id: getHash
       run: |
