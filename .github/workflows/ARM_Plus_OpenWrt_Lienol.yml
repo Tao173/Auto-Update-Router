@@ -335,6 +335,10 @@ jobs:
         sed -i '/exit 0/d' package/default-settings/files/zzz-default-settings
         cat files/mydefault >> package/default-settings/files/zzz-default-settings         
 
+    - name: Setup Debug Session 'touch /tmp/keepalivegit'
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
+      uses: csexton/debugger-action@master
+      
     - name: Upload files to release
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false')     
       uses: ncipollo/release-action@v1
