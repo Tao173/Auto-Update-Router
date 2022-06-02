@@ -56,7 +56,6 @@ jobs:
         event-type: Lean Source Code Update     
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////        
   Checkb:
-    needs: [Checka]
     runs-on: ubuntu-20.04
     env:
       REPO_URL: https://github.com/Lienol/openwrt
@@ -93,7 +92,6 @@ jobs:
         event-type: Lienol Source Code Update     
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////        
   Checkc:
-    needs: [Checkb]  
     runs-on: ubuntu-20.04
     env:
       REPO_URL: https://github.com/immortalwrt/immortalwrt
@@ -130,7 +128,6 @@ jobs:
         event-type: Immortalwrt Source Code Update      
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////        
   Checkd:
-    needs: [Checkc]  
     runs-on: ubuntu-20.04
     env:
       REPO_URL: https://github.com/unifreq/openwrt_packit
