@@ -201,7 +201,7 @@ jobs:
         event-type: Mykernel Update
 
   New-Update-Files:
-    needs: [Checka, Checkb,Checkc, Checkd]   
+    needs: [Checka, Checkb,Checkc, Checkd, Checke]   
     if: ${{ needs.Checkd.outputs.output != 'hello' }} && ${{ needs.Checke.outputs.output != 'hello' }}
     runs-on: ubuntu-20.04
     steps:
@@ -244,7 +244,7 @@ jobs:
 # //////////////////////////////////////////////////////////////////////////////////////////////
   Cleaning:
     if: ${{ always() }}
-    needs: [New-Update-Files,Checka,Checkb,Checkc,Checkd]    
+    needs: [New-Update-Files,Checka,Checkb,Checkc,Checkd,Checke]    
     runs-on: ubuntu-20.04
     steps:
     - name: Delete Older Workflows
