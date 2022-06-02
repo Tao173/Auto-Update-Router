@@ -166,7 +166,7 @@ jobs:
 
   New-Update-Files:
     needs: [Checka, Checkb,Checkc, Checkd]   
-    if: ${{ needs.Checka.outputs.output != 'hello' }} || ${{ needs.Checkb.outputs.output != 'hello' }} || ${{ needs.Checkc.outputs.output != 'hello' }} || ${{ needs.Checkd.outputs.output != 'hello' }}
+    if: ${{ needs.Checka.outputs.output != 'hello' }} && ${{ needs.Checkb.outputs.output != 'hello' }} && ${{ needs.Checkc.outputs.output != 'hello' }} && ${{ needs.Checkd.outputs.output != 'hello' }}
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
