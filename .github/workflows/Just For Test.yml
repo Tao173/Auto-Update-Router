@@ -253,7 +253,6 @@ jobs:
           echo "::set-output name=status::success"
           
       - name: Upload firmware to release
-        id: tag
         uses: ncipollo/release-action@v1
         if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
         with:
