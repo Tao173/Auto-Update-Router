@@ -10,11 +10,11 @@ These duplications are automated in the repository's packaging and install/updat
 <tr><td>ID</td><td>Model Name</td><td>SOC</td><td>FDTFILE</td><td>UBOOT_OVERLOAD</td><td>MAINLINE_UBOOT</td><td>ANDROID_UBOOT</td><td>Brief Description</td></tr>
 <tr><td>101</td><td>Phicomm N1</td><td>s905d</td><td>meson-gxl-s905d-phicomm-n1.dtb</td><td>u-boot-n1.bin</td><td>NA</td><td>u-boot-2015-phicomm-n1.bin</td><td>4C@1512Mhz,2GB Mem,1Gb Nic,Wifi</td></tr>
 <tr><td>102</td><td>Phicomm N1(DMA thresh)</td><td>s905d</td><td>meson-gxl-s905d-phicomm-n1-thresh.dtb</td><td>u-boot-n1.bin</td><td>NA</td><td>u-boot-2015-phicomm-n1.bin</td><td>Same as above, when ethmac flow control is off</td></tr>
-<tr><td>103</td><td>hg680p</td><td>s905x</td><td>meson-gxl-s905x-p212.dtb</td><td>u-boot-p212.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz,100Mb Nic</td></tr>
+<tr><td>103</td><td>HG680P & TBee Box</td><td>s905x</td><td>meson-gxl-s905x-p212.dtb</td><td>u-boot-p212.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz,100Mb Nic</td></tr>
 <tr><td>104</td><td>X96-Mini & TX3-Mini</td><td>s905w</td><td>meson-gxl-s905w-tx3-mini.dtb</td><td>u-boot-s905x-s912.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz,100Mb Nic</td></tr>
 <tr><td>105</td><td>MECOOL KI Pro</td><td>s905d</td><td>meson-gxl-s905d-mecool-ki-pro.dtb</td><td>u-boot-p201.bin</td><td>NA</td><td>NA</td><td>2G/16G,1Gb Nic</td></tr>
 <tr><td>106</td><td>T95</td><td>s905x</td><td>meson-gxl-s905x-p212.dtb</td><td>u-boot-s905x-s912.bin</td><td>NA</td><td>NA</td><td>1+8G,100Mb Nic(Use: extlinux/extlinux.conf)</td></tr>
-<tr><td>107</td><td>b860h</td><td>s905x</td><td>meson-gxl-s905x-b860h.dtb</td><td>u-boot-p212.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz,100Mb Nic</td></tr>
+<tr><td>107</td><td>B860H</td><td>s905x</td><td>meson-gxl-s905x-b860h.dtb</td><td>u-boot-p212.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz,100Mb Nic</td></tr>
 
 <tr><td>201</td><td>Octopus Planet</td><td>s912</td><td>meson-gxm-octopus-planet.dtb</td><td>u-boot-zyxq.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz+4C@1000Mhz,2GB Mem,1Gb Nic</td></tr>
 <tr><td>202</td><td>Octopus Planet (FAKE)</td><td>s912</td><td>meson-gxm-octopus-planet.dtb</td><td>u-boot-zyxq.bin</td><td>NA</td><td>bl-fake-octopus-planet.bin</td><td>4C@1512Mhz+4C@1000Mhz,2GB Mem,1Gb Nic</td></tr>
@@ -24,6 +24,7 @@ These duplications are automated in the repository's packaging and install/updat
 <tr><td>206</td><td>MECOOL M8S Pro L</td><td>s912</td><td>meson-gxm-q201.dtb</td><td>u-boot-s905x-s912.bin</td><td>NA</td><td>NA</td><td>2G RAM,3G RAM,16G ROM,32G ROM,100Mb Nic</td></tr>
 <tr><td>207</td><td>T95Z Plus</td><td>s912</td><td>meson-gxm-t95z-plus.dtb</td><td>u-boot-s905x-s912.bin</td><td>NA</td><td>NA</td><td>3G+32G,Octa-Core,2.4/5.8G Dual-Band WiFi,1Gb Nic 64Bit BT4.0(Use: extlinux/extlinux.conf)</td></tr>
 <tr><td>208</td><td>TX9 Pro</td><td>s912</td><td>meson-gxm-tx9-pro.dtb</td><td>u-boot-zyxq.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz+4C@1000Mhz,3G RAM,32G ROM,Bluetooth 4.1,1Gb Nic,brcm43455 wifi</td></tr>
+<tr><td>209</td><td>Nexbox A1 & A95X</td><td>s912</td><td>meson-gxm-nexbox-a1.dtb</td><td>u-boot-p212.bin</td><td>NA</td><td>NA</td><td>4C@1512Mhz+4C@1000Mhz,2G DDR3 RAM 16G eMMC,1Gb Nic,qca9377 wifi(no work)</td></tr>
 
 <tr><td>301</td><td>X96 Max 4GB</td><td>s905x2</td><td>meson-g12a-x96-max.dtb</td><td>u-boot-x96max.bin</td><td>x96max-u-boot.bin.sd.bin</td><td>NA</td><td>4C@1908Mhz,4GB Mem,1Gb Nic</td></tr>
 <tr><td>302</td><td>X96 Max 2GB</td><td>s905x2</td><td>meson-g12a-x96-max-rmii.dtb</td><td>u-boot-x96max.bin</td><td>x96max-u-boot.bin.sd.bin</td><td>NA</td><td>4C@1908Mhz,2GB Mem,100Mb Nic</td></tr>
