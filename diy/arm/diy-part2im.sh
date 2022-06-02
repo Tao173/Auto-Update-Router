@@ -126,7 +126,7 @@ svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/
 sed -i "s|https.*/OpenWrt|https://github.com/Tao173/Auto-Update-Router|g" package/luci-app-amlogic/root/etc/config/amlogic
 sed -i "s|opt/kernel|https://github.com/ophub/kernel/tree/main/pub/stable|g" package/luci-app-amlogic/root/etc/config/amlogic
 sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
-
+sed -i "s|.img.7z|.OPENWRT_SUFFIX|g" package/luci-app-amlogic/root/etc/config/amlogic
 # mqtt
 # svn co https://github.com/kenzok8/jell/trunk/luci-app-mosquitto package/luci-app-mosquitto
 
