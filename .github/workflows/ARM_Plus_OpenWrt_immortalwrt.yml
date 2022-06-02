@@ -214,16 +214,14 @@ jobs:
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0
-        GZIP_IMGS: .gz
+        GZIP_IMGS: .7z
 
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}     
+        rename "s/openwrt/immortalwrt/" ./*.7z
         rename "s/openwrt/immortalwrt/" ./*.gz
-
     - name: Upload openwrt to release
       uses: ncipollo/release-action@v1
       if: env.PACKAGED_STATUS == 'success' && !cancelled()
@@ -454,14 +452,13 @@ jobs:
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0
-        GZIP_IMGS: .gz
+        GZIP_IMGS: .7z
         
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
         cd  ${{ env.PACKAGED_OUTPUTPATH }}
+        rename "s/openwrt/immortalwrt/" ./*.7z
         rename "s/openwrt/immortalwrt/" ./*.gz
 
     - name: Upload openwrt to release

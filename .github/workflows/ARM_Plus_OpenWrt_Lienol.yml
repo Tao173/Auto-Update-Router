@@ -213,14 +213,13 @@ jobs:
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0
-        GZIP_IMGS: .gz
+        GZIP_IMGS: .zip
 
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
+        rename "s/openwrt/Lienol/" ./*.zip
         rename "s/openwrt/Lienol/" ./*.gz
 
     - name: Upload openwrt to release
@@ -447,14 +446,13 @@ jobs:
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0
-        GZIP_IMGS: .gz
+        GZIP_IMGS: .zip
 
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
+        rename "s/openwrt/Lienol/" ./*.zip
         rename "s/openwrt/Lienol/" ./*.gz
 
     - name: Upload openwrt to release

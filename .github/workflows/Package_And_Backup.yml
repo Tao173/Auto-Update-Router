@@ -74,10 +74,8 @@ jobs:
         KERNEL_VERSION_NAME: 5.10.83_5.15.13
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
-        OPENWRT_VER: ${{env.REPO_BRANCH}}
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0        
-        GZIP_IMGS: .7z
+        OPENWRT_VER: ${{env.REPO_BRANCH}}       
+        GZIP_IMGS: .zip
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
@@ -87,7 +85,7 @@ jobs:
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
-        rename "s/openwrt/Lienol/" ./*.gz
+        rename "s/openwrt/Lienol/" ./*.zip
 
     - name: Upload artifact to actions
       uses: kittaakos/upload-artifact-as-is@master
@@ -160,10 +158,8 @@ jobs:
         KERNEL_REPO_URL: https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel
         KERNEL_VERSION_NAME: 5.10.83_5.15.13
         KERNEL_AUTO_LATEST: true
-        WHOAMI: Tao
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0        
-        GZIP_IMGS: .zip
+        WHOAMI: Tao     
+        GZIP_IMGS: .gz
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
@@ -247,10 +243,8 @@ jobs:
         KERNEL_VERSION_NAME: 5.4.163_5.10.83_5.15.13_5.17.13
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
-        OPENWRT_VER: ${{env.REPO_BRANCH}}
-        ENABLE_WIFI_K504: 0
-        ENABLE_WIFI_K510: 0        
-        GZIP_IMGS: .gz
+        OPENWRT_VER: ${{env.REPO_BRANCH}}       
+        GZIP_IMGS: .7z
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
@@ -260,7 +254,7 @@ jobs:
       run: |
         sudo apt install rename
         cd  ${{ env.PACKAGED_OUTPUTPATH }}
-        rename "s/openwrt/immortalwrt/" ./*.gz
+        rename "s/openwrt/immortalwrt/" ./*.7z` 
 
     - name: Upload artifact to actions
       uses: kittaakos/upload-artifact-as-is@master
@@ -291,6 +285,9 @@ jobs:
       REPO_URL: https://github.com/coolsnowwolf/lede
       REPO_BRANCH: master   
     steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -385,12 +382,13 @@ jobs:
         echo "::set-output name=status::success"
 
     - name: Telegram notification
+      if: steps.cloud189go.outputs.status == 'success'
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
-          OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2自用固件上传天翼云盘完成
+          自用固件上传天翼云盘完成。使用cloud189go程序。
           编译时间：${{ env.DATE }}
           更新信息：
           作者: ${{ env.author }}
@@ -398,4 +396,18 @@ jobs:
           内容: ${{ env.commit }}
           hash: ${{ env.hash }}
           以上信息来自Lean源码提交记录
-
+    - name: Telegram notification
+      if: steps.cloud189.outputs.status == 'success'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          自用固件上传天翼云盘完成。使用cloud189程序。
+          编译时间：${{ env.DATE }}
+          更新信息：
+          作者: ${{ env.author }}
+          时间: ${{ env.date }}
+          内容: ${{ env.commit }}
+          hash: ${{ env.hash }}
+          以上信息来自Lean源码提交记录

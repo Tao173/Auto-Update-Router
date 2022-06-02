@@ -87,8 +87,6 @@ svn co https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-linkeas
 svn co https://github.com/linkease/nas-packages/trunk/network/services/linkease package/linkease
 
 # 实时监控& # 流量监控
-svn co https://github.com/sirpdboy/sirpdboy-package/trunk/luci-app-netdata package/luci-app-netdata
-svn co https://github.com/sirpdboy/sirpdboy-package/trunk/netdata package/netdata
 svn co https://github.com/sirpdboy/sirpdboy-package/trunk/luci-app-wrtbwmon package/luci-app-wrtbwmon
 svn co https://github.com/sirpdboy/sirpdboy-package/trunk/wrtbwmon package/wrtbwmon
 
