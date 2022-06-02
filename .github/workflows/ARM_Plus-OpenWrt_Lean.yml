@@ -259,7 +259,6 @@ jobs:
 
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////
   buildtwo:
-    if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false') 
     runs-on: ubuntu-20.04
     env:
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -367,6 +366,7 @@ jobs:
         find dl -size -1024c -exec rm -f {} \;
 
     - name: Compile the firmware
+      if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false')     
       id: compile
       run: |
         cd openwrt
