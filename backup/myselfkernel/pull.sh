@@ -5,20 +5,20 @@ shopt -u extglob
 mv README.md back.md
 
 svn export https://github.com/ophub/amlogic-s9xxx-armbian/trunk/ ./ --force
-sed -i 's/default: ""/default: ""/g' ./.github/workflows/*
+sed -i 's/default: "-ophub"/default: ""/g' ./.github/workflows/*
 echo 'fucking'
 sed -i '/repository_dispatch:/d' ./.github/workflows/*
 sed -i 's/secrets.GH_TOKEN/secrets.ACTIONS_TRIGGER_PAT/g' ./.github/workflows/*
 sed -i '9s/^/    types: [Build]\n/g' ./.github/workflows/*kernel.yml
 sed -i '9s/^/  repository_dispatch:\n/g' ./.github/workflows/*kernel.yml
-sed -i 's?Tao173/compile-kernel@main?Tao173/compile-kernel@main?g' `grep -rl "Tao173/compile-kernel@main" ./`
-sed -i 's///g' ` grep -e  -rl ./`
+sed -i 's?ophub/amlogic-s9xxx-armbian@main?Tao173/compile-kernel@main?g' ` grep -e ophub/amlogic-s9xxx-armbian@main -rl ./*/`
+sed -i 's/-ophub//g' ` grep -e -ophub -rl ./*/`
 
 rm -rf .git
 mv first1 .git
-cp -rf back/*  .github/workflows
 rm -rf first1
 cat .github/workflows/telegram >> .github/workflows/compile-kernel.yml
+compile-kernel.yml
 
 #备份源仓库readme
 mv README.md READMEBACK.md
