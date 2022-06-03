@@ -11,9 +11,8 @@ sed -i '/repository_dispatch:/d' ./.github/workflows/*
 sed -i 's/secrets.GH_TOKEN/secrets.ACTIONS_TRIGGER_PAT/g' ./.github/workflows/*
 sed -i '9s/^/    types: [Build]\n/g' ./.github/workflows/*kernel.yml
 sed -i '9s/^/  repository_dispatch:\n/g' ./.github/workflows/*kernel.yml
-sed -i 's/-ophub//g' ./*.yml
 sed -i 's?ophub/amlogic-s9xxx-armbian@main?Tao173/compile-kernel@main?g' ./*.yml
-
+sed -i 's/-ophub//g' `grep "-ophub" -rl ./`
 
 rm -rf .git
 mv first1 .git
