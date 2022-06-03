@@ -5,14 +5,14 @@ shopt -u extglob
 mv README.md back.md
 
 svn export https://github.com/ophub/amlogic-s9xxx-armbian/trunk/ ./ --force
-sed -i 's/default: "-ophub"/default: ""/g' ./.github/workflows/*
+sed -i 's/default: ""/default: ""/g' ./.github/workflows/*
 echo 'fucking'
 sed -i '/repository_dispatch:/d' ./.github/workflows/*
 sed -i 's/secrets.GH_TOKEN/secrets.ACTIONS_TRIGGER_PAT/g' ./.github/workflows/*
 sed -i '9s/^/    types: [Build]\n/g' ./.github/workflows/*kernel.yml
 sed -i '9s/^/  repository_dispatch:\n/g' ./.github/workflows/*kernel.yml
 sed -i 's?ophub/amlogic-s9xxx-armbian@main?Tao173/compile-kernel@main?g' ./*.yml
-sed -i 's/-ophub//g' `grep '-ophub' -rwl ./`
+sed -i 's///g' ` grep -e  -rl ./`
 
 rm -rf .git
 mv first1 .git

@@ -270,7 +270,7 @@ sudo apt-get install -y $(cat compile-kernel/tools/script/ubuntu2204-build-armbi
     build_target: kernel
     kernel_version: 5.15.25_5.10.100
     kernel_auto: true
-    kernel_sign: -ophub
+    kernel_sign: 
 ```
 
 ## Armbian 贡献者
