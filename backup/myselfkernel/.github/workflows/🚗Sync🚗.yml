@@ -31,7 +31,7 @@ jobs:
         token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
     - name: delete
       run: |
-        mv .git first1 && mv .github first2   
+        mv .github first2   
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
