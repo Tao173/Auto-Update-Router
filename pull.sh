@@ -19,6 +19,8 @@ svn export https://github.com/ophub/amlogic-s9xxx-armbian/trunk/ ./backup/amlogi
 svn export https://github.com/haiibo/OpenWrt/trunk/ ./backup/haiibo-OpenWrt --force
 svn export https://github.com/ophub/luci-app-amlogic/trunk/ ./backup/ophub_luci-app-amlogic --force
 
+#内核备份
+svn export https://github.com/Tao173/compile-kernel/trunk/ ./backup/myselfkernel --force
 #编译OP
 svn export https://github.com/unifreq/openwrt_packit/trunk/ ./ --force
 mv README.md READMEBACK.md
