@@ -9,7 +9,7 @@ name: ARMv8_Plus_Lean
 
 on:
   repository_dispatch:
-    types: [Lean Source Code Update] 
+    types: [Lean Source Code Update, Mykernel Update] 
   workflow_dispatch:
     inputs:
       ssh:

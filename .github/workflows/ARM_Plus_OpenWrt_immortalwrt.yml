@@ -9,7 +9,7 @@ name: ARMv8_Plus_immortalwrt_21.02
 
 on:
   repository_dispatch:
-    types: [Immortalwrt Source Code Update] 
+    types: [Immortalwrt Source Code Update, Mykernel Update] 
   workflow_dispatch:
     inputs:
       ssh:

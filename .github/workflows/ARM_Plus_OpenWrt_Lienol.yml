@@ -9,7 +9,7 @@ name: ARMv8_Plus_Lienol_21.02
 
 on:
   repository_dispatch:
-    types: [Lienol Source Code Update] 
+    types: [Lienol Source Code Update, Mykernel Update] 
   workflow_dispatch:
     inputs:
       ssh:
