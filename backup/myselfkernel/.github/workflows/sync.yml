@@ -1,0 +1,68 @@
+#===============================================
+# Description: multiple source check
+# Lisence: MIT
+# Original Author: Tao173 
+#===============================================
+
+name: 🎈🎈 Sync source ⚠
+
+on:
+  repository_dispatch:
+    types: [Source Code Update] 
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Delete one file for test?'
+        required: false
+        default: 'false' 
+      ssh:
+        description: 'ssh?'
+        required: false
+        default: 'false'          
+env:
+  TZ: Asia/Shanghai
+jobs:
+  New-Update-Files:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+    - name: delete
+      run: |
+        mv .git first1 && rm -rf .github/workflows
+    - name: Setup Debug Session
+      uses: csexton/debugger-action@master          
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo timedatectl set-timezone "$TZ"
+        pwd
+        chmod +x pull.sh
+        ./pull.sh
+    - name: Delete one file for test
+      if: (github.event.inputs.test == 'true' && github.event.inputs.test  != 'false')     
+      run: |
+        rm -rf Dockerfile
+    - name: Setup Debug Session
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false')     
+      uses: csexton/debugger-action@master
+    - name: Commit
+      run: |
+        git config --global user.email Mr.Wanzi@outlook.com
+        git config --global user.name Tao-Another
+        git add .
+        git commit -m"action:`date`"
+        git pull --rebase
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.ACTIONS_TRIGGER_PAT }}            
+    - name: Delete Older Workflows
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        retain_days: 0
+        keep_minimum_runs: 2

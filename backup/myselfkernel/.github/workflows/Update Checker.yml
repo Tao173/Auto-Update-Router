@@ -1,0 +1,61 @@
+#==========================================================================
+# Description: Compile the Armbian kernel
+# Copyright (C) 2021 https://github.com/ophub/amlogic-s9xxx-armbian
+#==========================================================================
+
+name: Update Checker
+
+env:
+  REPO_URL: https://github.com/ophub/amlogic-s9xxx-armbian
+  REPO_BRANCH: main
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/30 * * * *'
+jobs:
+  Checka:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/ophub/amlogic-s9xxx-armbian
+      REPO_BRANCH: main
+    outputs:
+      output: ${{ steps.outputunifreq.outputs.unifreq }}        
+    steps:
+    - name: Get Commit Hash
+      id: getHash
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH ./c
+        cd c
+        echo "::set-output name=commitHasha::$(git rev-parse HEAD)"
+    - name: Compare Commit Hash
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: .commitHasha
+        key: HEAD-${{ steps.getHash.outputs.commitHasha }}
+    - name: Set output for next job
+      id: outputunifreq
+      if: steps.cacheHash.outputs.cache-hit == 'true'
+      run: |
+        echo "::set-output name=unifreq::hello"
+    - name: Save New Commit Hash
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      run: |
+        echo ${{ steps.getHash.outputs.commitHash }} | tee .commitHash
+    - name: Trigger build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+        event-type: Source Code Update   
+    - name: Sleep for 600 seconds
+      run: sleep 600s
+      shell: bash
+    - name: Trigger build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+        event-type: Build    
+       
