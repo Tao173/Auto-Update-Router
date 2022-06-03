@@ -75,3 +75,10 @@ jobs:
           token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           body: |
             The kernel can be used to compile Armbian and OpenWrt.
+      - name: Telegram notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            内核打包完成。

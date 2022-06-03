@@ -17,8 +17,9 @@ sed -i 's/-ophub//g' ` grep -e -ophub -rl ./*/`
 rm -rf .git
 mv first1 .git
 rm -rf first1
-cat .github/workflows/telegram >> .github/workflows/compile-kernel.yml
-compile-kernel.yml
+cp -rf back/* .github/workflows/
+cat back/telegram >> .github/workflows/compile-kernel.yml
+
 
 #备份源仓库readme
 mv README.md READMEBACK.md
