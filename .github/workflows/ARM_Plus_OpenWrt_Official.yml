@@ -86,7 +86,7 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
     - name: Just For Myself
-      if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false') 
+#      if: (github.event.inputs.myself == 'true' && github.event.inputs.myself  != 'false') 
       run: |
         cp -RT  diy/files openwrt/files
         unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip
