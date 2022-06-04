@@ -8,7 +8,7 @@ name: Multiple Source Check
 
 on:
   schedule:
-    - cron: '*/47 * * * *' 
+    - cron: '0 */4 * * *' 
   workflow_dispatch:
     inputs:
       SSH:
