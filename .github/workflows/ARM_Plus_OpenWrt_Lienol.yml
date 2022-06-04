@@ -213,13 +213,13 @@ jobs:
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        GZIP_IMGS: .zip
+        GZIP_IMGS: .xz
 
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
-        rename "s/openwrt/Lienol/" ./*.zip
+        rename "s/openwrt/Lienol/" ./*.xz
         rename "s/openwrt/Lienol/" ./*.gz
 
     - name: Upload openwrt to release
@@ -450,13 +450,13 @@ jobs:
         KERNEL_AUTO_LATEST: true
         WHOAMI: Tao
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        GZIP_IMGS: .zip
+        GZIP_IMGS: .xz
 
     - name: Rename Firmware and Rootfs for upload
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
-        rename "s/openwrt/Lienol/" ./*.zip
+        rename "s/openwrt/Lienol/" ./*.xz
         rename "s/openwrt/Lienol/" ./*.gz
 
     - name: Upload openwrt to release
