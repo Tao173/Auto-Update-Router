@@ -194,6 +194,7 @@ jobs:
       run: |
         echo ${{ steps.getHash.outputs.commitHashe }} | tee .commitHash
     - name: Sleep for 3h (wait for kernel bulid)
+      if: steps.cacheHash.outputs.cache-hit != 'true'
       run: sleep 3h
       shell: bash
     - name: Trigger build
