@@ -220,11 +220,11 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo timedatectl set-timezone "$TZ"
-        svn co --username ${{ secrets.MYNAME }} --password ${{ secrets.ACTIONS_TRIGGER_PAT }} https://github.com/${{ secrets.MYPRIVATEREPOSITORIES }}/trunk/files ./files
-        cp ./files/pull.sh ./
+        svn co --username ${{ secrets.MYNAME }} --password ${{ secrets.ACTIONS_TRIGGER_PAT }} https://github.com/${{ secrets.MYPRIVATEREPOSITORIES }}/trunk/files ./diy/files
+        cp ./diy/files/pull.sh ./
         chmod +x pull.sh
         ./pull.sh
-        rm -rf pull.sh && rm -rf files
+        rm -rf pull.sh && rm -rf ./diy/files
 
     - name: Download Myself kernel
       uses: robinraju/release-downloader@v1.3
