@@ -334,7 +334,7 @@ jobs:
         svn co --username ${{ secrets.MYNAME }} --password ${{ secrets.ACTIONS_TRIGGER_PAT }} https://github.com/${{ secrets.MYPRIVATEREPOSITORIES }}/trunk/files ./openwrt/files
         rm -rf ./openwrt/files/pull.sh
         cat ./openwrt/files/diy-part.sh >> ./diy/arm/diy-part2Li.sh && rm -rf ./openwrt/files/diy-part.sh
-        cp -RT  ./files/* openwrt/files && unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip && rm -rf openwrt/files/etc/config.zip  
+        unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip && rm -rf openwrt/files/etc/config.zip  
         chmod +x $DIY_P2_SH 
         cd openwrt       
         $GITHUB_WORKSPACE/$DIY_P2_SH
