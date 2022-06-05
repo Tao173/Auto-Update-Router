@@ -331,7 +331,7 @@ jobs:
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         svn co --username ${{ secrets.MYNAME }} --password ${{ secrets.ACTIONS_TRIGGER_PAT }} https://github.com/${{ secrets.MYPRIVATEREPOSITORIES }}/trunk/files ./openwrt/files
-        rm -rf ./openwrt/files/pull.sh && rm -rf ./openwrt/files/mydefault 
+        rm -rf ./openwrt/files/pull.sh
         cat ./openwrt/files/diy-part.sh >> ./diy/arm/diy-part2Li.sh && rm -rf ./openwrt/files/diy-part.sh
         unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip && rm -rf openwrt/files/etc/config.zip  
         chmod +x $DIY_P2_SH 
