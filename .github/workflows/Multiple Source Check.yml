@@ -210,7 +210,7 @@ jobs:
 
   New-Update-Files:
     needs: [Checka, Checkb,Checkc, Checkd]   
-    if: ${{ needs.Checkd.outputs.output != 'hello' }} && if: (github.event.inputs.forceupdate == 'true' && github.event.inputs.forceupdate  != 'false') 
+    if: ${{ needs.Checkd.outputs.output != 'hello' }} && (github.event.inputs.forceupdate == 'true' && github.event.inputs.forceupdate  != 'false') 
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
