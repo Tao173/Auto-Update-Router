@@ -52,7 +52,7 @@ inputs:
   kernel_sign:
     description: "Set the kernel custom name"
     required: false
-    default: "-ophub"
+    default: ""
   kernel_repo:
     description: "select kernel repository"
     required: false

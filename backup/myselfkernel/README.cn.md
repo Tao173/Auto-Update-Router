@@ -218,7 +218,7 @@ sudo apt-get install -y $(cat compile-kernel/tools/script/ubuntu2204-build-armbi
 
 ```yaml
 - name: Rebuild the Armbian for Amlogic s9xxx
-  uses: ophub/amlogic-s9xxx-armbian@main
+  uses: Tao173/compile-kernel@main
   with:
     build_target: armbian
     armbian_path: build/output/images/*.img
@@ -265,12 +265,12 @@ sudo apt-get install -y $(cat compile-kernel/tools/script/ubuntu2204-build-armbi
 
 ```yaml
 - name: Compile the kernel for Amlogic s9xxx
-  uses: ophub/amlogic-s9xxx-armbian@main
+  uses: Tao173/compile-kernel@main
   with:
     build_target: kernel
     kernel_version: 5.15.25_5.10.100
     kernel_auto: true
-    kernel_sign: -ophub
+    kernel_sign: 
 ```
 
 ## Armbian 贡献者
