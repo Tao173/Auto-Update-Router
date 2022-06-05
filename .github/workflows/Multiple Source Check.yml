@@ -15,6 +15,10 @@ on:
         description: 'SSH connection to Actions?'
         required: false
         default: 'false'
+      forceupdate:
+        description: 'Forceupdate?'
+        required: false
+        default: 'false'      
 env:
   TZ: Asia/Shanghai
 
@@ -206,7 +210,7 @@ jobs:
 
   New-Update-Files:
     needs: [Checka, Checkb,Checkc, Checkd]   
-    if: ${{ needs.Checkd.outputs.output != 'hello' }}
+    if: ${{ needs.Checkd.outputs.output != 'hello' }} && if: (github.event.inputs.forceupdate == 'true' && github.event.inputs.forceupdate  != 'false') 
     runs-on: ubuntu-20.04
     steps:
     - name: Checkout
