@@ -323,7 +323,10 @@ jobs:
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
-
+    - name: Setup Debug Session 'touch /tmp/keepalivegit'
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 
+      uses: csexton/debugger-action@master
+      
     - name: Load custom configuration
       run: |
         [ -e files ] && mv files openwrt/files
