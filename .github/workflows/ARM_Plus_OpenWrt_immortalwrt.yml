@@ -40,7 +40,7 @@ env:
   PACKAGE_SOC: vplus_beikeyun_l1pro_s905d_s905x2_s905x3_s912_s922x_s922x-n2
   KERNEL_REPO_URL_ONE: https://github.com/ophub/kernel/tree/main/pub/stable
   KERNEL_REPO_URL_TWO: https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel
-
+  JUDGE_USE: immortalwrt
 jobs:
   buildone:
     runs-on: ubuntu-20.04
@@ -331,15 +331,13 @@ jobs:
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        cp -RT  diy/files openwrt/files
-        unzip  -P ${{ secrets.ZIPPASS }} -d openwrt/files/etc openwrt/files/etc/config.zip
-        rm -rf openwrt/files/etc/config.zip
+        svn co --username ${{ secrets.MYNAME }} --password ${{ secrets.ACTIONS_TRIGGER_PAT }} https://github.com/${{ secrets.MYPRIVATEREPOSITORIES }}/trunk/files ./files
+        rm -rf ./files/pull.sh && rm -rf ./files/mydefault && rm -rf ./files/diy-part.sh
+        cat files/diy-part.sh >> diy/arm/diy-part2Li.sh
         chmod +x $DIY_P2_SH
         cd openwrt       
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/emortal/default-settings/files/99-default-settings
-        sed -i '/exit 0/d' package/emortal/default-settings/files/99-default-settings
-        cat files/mydefault >> package/emortal/default-settings/files/99-default-settings         
+        
 
     - name: Setup Debug Session 'touch /tmp/keepalivegit'
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') 

@@ -7,24 +7,6 @@
 # Blog: https://p3terx.com
 #===============================================
 
-# 修改默认IP
-sed -i 's/192.168.1.1/192.168.124.38/g' package/base-files/files/bin/config_generate
-
-# Autocore
-# sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' package/lean/autocore/Makefile
-
-#2. 取消首次登陆WEB页密码 设置ttyd免帐号登录
-#sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/default-settings/files/zzz-default-settings
-sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root::0:0:99999:7:::/' package/default-settings/files/zzz-default-settings
-sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
-sed -i "s/-SNAPSHOT/-Lienol/g" package/default-settings/files/zzz-default-settings
-
-#7. 修改版本号
-# sed -i "s/OpenWrt /OpenWrt-Tao $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" package/lean/default-settings/files/zzz-default-settings
-
-# Hostname
-sed -i 's/OpenWrt/OpenWrt-Tao/g' package/base-files/files/bin/config_generate
-
 # 移除lede内重复软件包
 rm -rf feeds/packages/net/mosdns
 #rm -rf feeds/packages/admin/netdata
@@ -71,22 +53,6 @@ git clone https://github.com/thinktip/luci-theme-neobird package/luci-theme-neob
 git clone https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
 git clone https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 # git clone https://github.com/XXKDB/luci-theme-argon_armygreen package/luci-theme-argon_armygreen
-#修改主题多余版本信息
-## /usr/lib/lua/luci/view/themes/argon/footer.htm
-sed -i "s|(<%= ver.luciversion %>)||g" package/luci-theme-argon/luasrc/view/themes/*/footer.htm
-sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a>|g" package/luci-theme-argon/luasrc/view/themes/*/footer.htm
-sed -i "/<%= ver.distversion %>/d" package/luci-theme-argon/luasrc/view/themes/*/footer.htm
-sed -i "s|(<%= ver.luciversion %>)||g" package/luci-theme-argon/luasrc/view/themes/*/footer_login.htm
-sed -i "s|ArgonTheme <%# vPKG_VERSION %></a> /|ArgonTheme <%# vPKG_VERSION %></a>|g" package/luci-theme-argon/luasrc/view/themes/*/footer_login.htm
-sed -i "/<%= ver.distversion %>/d" package/luci-theme-argon/luasrc/view/themes/*/footer_login.htm
-#去除固件版本小尾巴
-#sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-#修改web页面内核信息(菜鸟转义)
-#sed -i 's?unameinfo.release?luci.sys.exec("cat /etc/flippy-openwrt-release | grep \\"KERNEL_VERSION=5\\" | cut -d \\"=\\" \\-f 2")?g' feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-#web概览修改
-#sed -i "s| + cpubench.cpubench||g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-sed -i "s?boardinfo.release.description + ' / ' : '') + (luciversion || '')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-#sed -i "s?boardinfo.release.description+' / ':'')+(luciversion||'')?boardinfo.release.description + '  ' : '')?g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 
 # MosDNS
 svn co https://github.com/QiuSimons/openwrt-mos/trunk/luci-app-mosdns package/luci-app-mosdns

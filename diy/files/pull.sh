@@ -57,4 +57,4 @@ mv back.md README.md
 cd ./files
 rm -rf banner
 svn export https://github.com/Tao173/Auto-Update-Router/trunk/diy/banner ./  --force
-cd
+cd ..

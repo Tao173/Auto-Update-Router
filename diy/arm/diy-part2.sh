@@ -7,24 +7,6 @@
 # Blog: https://p3terx.com
 #===============================================
 
-# 修改默认IP
-sed -i 's/192.168.1.1/192.168.124.38/g' package/base-files/files/bin/config_generate
-sed -i 's/UTC/UTC+8/g' package/base-files/files/bin/config_generate
-
-# Autocore
-sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' package/lean/autocore/Makefile
-
-#2. 取消首次登陆WEB页密码 设置ttyd免帐号登录
-#sed -i '/CYXluq4wUazHjmCDBCqXF/d' package/lean/default-settings/files/zzz-default-settings
-sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root::0:0:99999:7:::/' package/lean/default-settings/files/zzz-default-settings
-sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
-
-#7. 修改版本号
-sed -i "s/OpenWrt /OpenWrt-Tao $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" package/lean/default-settings/files/zzz-default-settings
-
-# Hostname
-sed -i 's/OpenWrt/OpenWrt-Tao/g' package/base-files/files/bin/config_generate
-
 # Cpufreq
 sed -i 's/LUCI_DEPENDS.*/LUCI_DEPENDS:=\@\(arm\|\|aarch64\)/g' feeds/luci/applications/luci-app-cpufreq/Makefile
 sed -i 's/services/system/g' feeds/luci/applications/luci-app-cpufreq/luasrc/controller/cpufreq.lua
@@ -107,21 +89,6 @@ git clone https://github.com/jerrykuku/luci-app-argon-config package/luci-app-ar
 # svn co https://github.com/haiibo/packages/trunk/luci-theme-netgear package/luci-theme-netgear
 # git clone https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom package/luci-theme-infinityfreedom
 # git clone https://github.com/sirpdboy/luci-theme-opentopd package/luci-theme-opentopd
-#修改主题多余版本信息
-#登陆页面右下角技术支持  跳转网站“https://github.com/openwrt/luci”   名称“可爱动漫主题”
-#sed -i 's/可爱动漫主题/可爱动漫主题/g' package/lean/luci-theme-argon_armygreen/luasrc/view/themes/argon_armygreen/footer.htm
-#sed -i 's#https://github.com/openwrt/luci#https://jq.qq.com/?_wv=1027&k=s7GHUQ4e#g' package/lean/luci-theme-argon_armygreen/luasrc/view/themes/argon_armygreen/footer.htm
-#主机名右上角符号❤
-#sed -i 's/❤/❤/g' package/lean/luci-theme-argon_armygreen/luasrc/view/themes/argon_armygreen/header.htm
-#修改主题多余版本信息
-sed -i "s|Powered by <%= ver.luciname %>|Powered by <%= ver.luciname %><\/a> \/|g" package/luci-theme-argon/luasrc/view/themes/argon/footer.htm
-sed -i "/(<%= ver.luciversion %>)<\/a> \//d" package/luci-theme-argon/luasrc/view/themes/argon/footer.htm
-#去除固件版本小尾巴
-sed -i "s| (<%=pcdata(ver.luciversion)%>)||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-#去除型号右侧肿瘤式跑分信息
-sed -i "s|\ <%=luci.sys.exec(\"cat \/etc\/bench.log\") or \" \"%>||g" feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
-#修改web页面内核信息(菜鸟转义)
-#sed -i 's?unameinfo.release?luci.sys.exec("cat /etc/flippy-openwrt-release | grep \\"KERNEL_VERSION=5\\" | cut -d \\"=\\" \\-f 2")?g' feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_status/index.htm
 
 # 晶晨宝盒软件固件升级地址
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
