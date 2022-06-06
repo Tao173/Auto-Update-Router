@@ -33,7 +33,7 @@ env:
   UPLOAD_RELEASE: true  
   UPLOAD_189: false
   WHOAMI: Tao
-  GZIP_IMGS: .7z
+  GZIP_IMGS: .gz
   KERNEL_AUTO_LATEST: true
   OPENWRT_ARMVIRT: lean/*/*/*rootfs.tar.gz
   KERNEL_VERSION_NAME: 5.4.163_5.10.83_5.15.13_5.17.13
@@ -226,7 +226,7 @@ jobs:
         KERNEL_AUTO_LATEST: ${{ env.KERNEL_AUTO_LATEST }}
         WHOAMI: ${{env.WHOAMI}}
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        GZIP_IMGS: ${{ env.PRODUCT_NAME }}
+        GZIP_IMGS: ${{ env.GZIP_IMGS }}
 
     - name: Rename Firmware and Rootfs for upload
       run: |
@@ -456,7 +456,7 @@ jobs:
         KERNEL_AUTO_LATEST: ${{ env.KERNEL_AUTO_LATEST }}
         WHOAMI: ${{env.WHOAMI}}
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        GZIP_IMGS: ${{ env.PRODUCT_NAME }}
+        GZIP_IMGS: ${{ env.GZIP_IMGS }}
 
     - name: Rename Firmware and Rootfs for upload
       run: |

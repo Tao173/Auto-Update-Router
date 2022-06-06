@@ -93,8 +93,9 @@ git clone https://github.com/jerrykuku/luci-app-argon-config package/luci-app-ar
 # 晶晨宝盒软件固件升级地址
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 sed -i "s|https.*/OpenWrt|https://github.com/Tao173/Auto-Update-Router|g" package/luci-app-amlogic/root/etc/config/amlogic
-sed -i "s|opt/kernel|https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel|g" package/luci-app-amlogic/root/etc/config/amlogic
+sed -i "s|opt/kernel|https://github.com/ophub/kernel/tree/main/pub/stable|g" package/luci-app-amlogic/root/etc/config/amlogic
 sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
+sed -i "s|.img.gz|.OPENWRT_SUFFIX|g" package/luci-app-amlogic/root/etc/config/amlogic
 
 # MosDNS
 svn co https://github.com/QiuSimons/openwrt-mos/trunk/luci-app-mosdns package/luci-app-mosdns

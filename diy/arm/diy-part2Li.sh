@@ -87,9 +87,9 @@ svn co https://github.com/kenzok8/jell/trunk/gost package/gost
 # 晶晨宝盒软件固件升级地址
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 sed -i "s|https.*/OpenWrt|https://github.com/Tao173/Auto-Update-Router|g" package/luci-app-amlogic/root/etc/config/amlogic
-sed -i "s|opt/kernel|https://github.com/Tao173/Auto-Update-Router/tree/master/backup/mykernel|g" package/luci-app-amlogic/root/etc/config/amlogic
+sed -i "s|opt/kernel|https://github.com/ophub/kernel/tree/main/pub/stable|g" package/luci-app-amlogic/root/etc/config/amlogic
 sed -i "s|ARMv8|ARMv8_PLUS|g" package/luci-app-amlogic/root/etc/config/amlogic
-sed -i "s|.img.zip|.OPENWRT_SUFFIX|g" package/luci-app-amlogic/root/etc/config/amlogic
+sed -i "s|.img.xz|.OPENWRT_SUFFIX|g" package/luci-app-amlogic/root/etc/config/amlogic
 # # 调整V2ray服务到VPN菜单
 # sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/controller/*.lua
 # sed -i 's/services/vpn/g' feeds/luci/applications/luci-app-v2ray-server/luasrc/model/cbi/v2ray_server/*.lua

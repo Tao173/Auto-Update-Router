@@ -225,7 +225,7 @@ jobs:
         KERNEL_AUTO_LATEST: ${{ env.KERNEL_AUTO_LATEST }}
         WHOAMI: ${{env.WHOAMI}}
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        GZIP_IMGS: ${{ env.PRODUCT_NAME }}
+        GZIP_IMGS: ${{ env.GZIP_IMGS }}
 
     - name: Rename Firmware and Rootfs for upload
       run: |
@@ -457,7 +457,7 @@ jobs:
         KERNEL_AUTO_LATEST: ${{ env.KERNEL_AUTO_LATEST }}
         WHOAMI: ${{env.WHOAMI}}
         OPENWRT_VER: ${{env.REPO_BRANCH}}
-        GZIP_IMGS: ${{ env.PRODUCT_NAME }}
+        GZIP_IMGS: ${{ env.GZIP_IMGS }}
         
     - name: Rename Firmware and Rootfs for upload
       run: |
