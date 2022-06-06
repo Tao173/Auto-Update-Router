@@ -211,7 +211,7 @@ jobs:
         rename "s/Lienol.build/build/" ./Lienol.build.config
         rename "s/Lienol.config/config/" ./Lienol.config.buildinfo
         rename "s/Lienol/openwrt/" ./*
-        mv sha256sums lienolsha256sums
+
     - name: Package armvirt as openwrt
       uses: Tao173/Auto-Update-Router@master
       if: steps.organize.outputs.status == 'success' && !cancelled()
@@ -231,7 +231,7 @@ jobs:
         cd ${{ env.PACKAGED_OUTPUTPATH }}
         rename "s/openwrt/Lienol/" ./*${{ env.PRODUCT_NAME }}
         rename "s/openwrt/Lienol/" ./*.gz
-
+        mv sha256sums lienolsha256sums
     - name: Upload openwrt to release
       uses: ncipollo/release-action@v1
       if: env.PACKAGED_STATUS == 'success' && !cancelled()
