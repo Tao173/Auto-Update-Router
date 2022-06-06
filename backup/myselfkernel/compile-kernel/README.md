@@ -37,15 +37,15 @@ sudo apt-get install -y $(cat compile-kernel/tools/script/ubuntu2204-build-armbi
 | -d | Defaults | Compile all kernels with default configuration. |
 | -k | Kernel | Specify kernel name, such as `-k 5.10.100`. Multiple kernels use `_` to connect, such as `- k 5.15.25_5.10.100` |
 | -a | AutoKernel | Set whether to automatically adopt the latest version of the kernel of the same series. When it is `true`, it will automatically find whether there is a newer version of the kernel specified in `-k` such as `5.10.100` of the series. If there is the latest version after `5.10.100`, it will be automatically replaced with the latest version . When set to `false`, the specified version of the kernel will be compiled. Default value: `true` |
-| -n | CustomName | Set the kernel custom signature. The default value is `` and the generated kernel is `5.10.100`. Do not include spaces when setting a custom signature. |
+| -n | CustomName | Set the kernel custom signature. The default value is `-ophub` and the generated kernel is `5.10.100-ophub`. Do not include spaces when setting a custom signature. |
 | -r | Repository | Specifies the source code repository for the compiled kernel. Defaults to `unifreq` . You can choose the source code of `kernel.org` and the kernel source of `github.com` code repository. For example `-r kernel.org` or `-r unifreq`, etc., When using the kernel source code repository of `github.com`, the parameter format can be set to the three-item combination of `owner/repo@branch` , The owner name `owner` in the parameters is a required parameter, the kernel source code repository name `/repo` and the repository branch name `@branch` are optional parameters. When only the owner name `owner` parameter is specified, it will automatically match kernel source code repositories whose owner's name is in `linux-5.x.y` format and branch is `main`. If the repository name or branch name is different, use a combination, such as `owner@branch` or `owner/repo` or `owner/repo@branch` |
 
 - `sudo ./recompile -d`: Use the default configuration to compiled kernel.
 - `sudo ./recompile -d -k 5.10.100`: Use the default configuration, and use the `-k` parameter to specify the kernel version to be compiled, and use `_` to link when multiple versions are compiled at the same time.
 - `sudo ./recompile -d -k 5.10.100 -a true`: Use the default configuration, and use the `-a` parameter to set whether to automatically upgrade to the latest kernel of the same series when compiling the kernel.
-- `sudo ./recompile -d -k 5.10.100 -n `: Use the default configuration, and use the `-n` parameter to set the kernel custom signature.
+- `sudo ./recompile -d -k 5.10.100 -n -ophub`: Use the default configuration, and use the `-n` parameter to set the kernel custom signature.
 - `sudo ./recompile -d -k 5.10.100 -r kernel.org`: Use the default configuration, and set the kernel source code repository through the `-r` parameter.
-- `sudo ./recompile -d -k 5.15.25_5.10.100 -a true -n  -r kernel.org`: Use the default configuration, and set through multiple parameters.
+- `sudo ./recompile -d -k 5.15.25_5.10.100 -a true -n -ophub -r kernel.org`: Use the default configuration, and set through multiple parameters.
 
 💡Tip: It is recommended to use the kernel source code of unifreq's [5.10](https://github.com/unifreq/linux-5.10.y), [5.15](https://github.com/unifreq/linux-5.15.y) and other repositories for compilation. He has added drivers and patches for related TV Boxes. It is recommended to use the templates in [tools/config](tools/config), which have been pre-configured according to the relevant TV Boxes and can be customized on this basis.
 
@@ -57,12 +57,12 @@ sudo apt-get install -y $(cat compile-kernel/tools/script/ubuntu2204-build-armbi
 
 ```yaml
 - name: Compile the kernel
-  uses: Tao173/compile-kernel@main
+  uses: ophub/amlogic-s9xxx-armbian@main
   with:
     build_target: kernel
     kernel_version: 5.15.25_5.10.100
     kernel_auto: true
-    kernel_sign: 
+    kernel_sign: -ophub
 ```
 
 - ### GitHub Action Input parameter description
@@ -74,9 +74,9 @@ The relevant parameters correspond to the `local compilation commands`, please r
 | build_target   | kernel   | Fixed parameter `kernel`, set the compilation target to the kernel. |
 | kernel_version | 5.15.25_5.10.100 | Specify kernel name, such as `5.10.100`. Function reference `-k` |
 | kernel_auto | true | Set whether to automatically adopt the latest kernel version of the same series. The default value is `true`. Function reference `-a` |
-| kernel_sign |  | Set the kernel custom signature. The default is ``. Function reference `-n` |
+| kernel_sign | -ophub | Set the kernel custom signature. The default is `-ophub`. Function reference `-n` |
 | kernel_repo    | unifreq  | Specifies the source code repository for the compiled kernel. The default is `unifreq` . Function reference `-r` |
-| kernel_config | null | The default uses the configuration templates in the [tools/config](tools/config) directory. You can set the directory where the compiled kernel configuration files are stored in your repository, such as `kernel/config_path` . The kernel configuration templates of each series stored in this directory must start with the name of `config-5.x`. For example, templates for compiling `5.10` series kernels can be named with various names starting with `config-5.10`, such as `config-5.10`, `config-5.10.100` or `config-5.10.100`, etc., When there are multiple files starting with `config-5.10`, the file with the highest version number will be used. |
+| kernel_config | null | The default uses the configuration templates in the [tools/config](tools/config) directory. You can set the directory where the compiled kernel configuration files are stored in your repository, such as `kernel/config_path` . The kernel configuration templates of each series stored in this directory must start with the name of `config-5.x`. For example, templates for compiling `5.10` series kernels can be named with various names starting with `config-5.10`, such as `config-5.10`, `config-5.10.100` or `config-5.10.100-ophub`, etc., When there are multiple files starting with `config-5.10`, the file with the highest version number will be used. |
 
 - ### GitHub Action Output variable description
 
