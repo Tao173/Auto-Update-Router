@@ -17,7 +17,6 @@ on:
         description: 'Which one want to upload? lean/immortalwrt/lienol/root/all'
         required: false
         default: 'all'
-    
 env:
   UPLOAD_FIRMWARE: false
   UPLOAD_RELEASE: true
