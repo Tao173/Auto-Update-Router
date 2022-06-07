@@ -101,6 +101,7 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         tag: ${{ env.PRODUCT_NAME }}
+        repo: ${{ secrets.PPRIVATE }}
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
           ** 打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Lienol](https://github.com/Lienol)      内核:[Myself](https://github.com/Tao173/compile-kernel)
