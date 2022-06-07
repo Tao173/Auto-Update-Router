@@ -430,7 +430,8 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true        
         tag: ${{ env.FILE_NAME }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        repo: ${{ secrets.PPRIVATE }}
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
         body: |
           打包时间:🕛${{ env.DATE }}      🤵源码作者:[Immortalwrt](https://github.com/immortalwrt)
           * 自用底包          
@@ -476,7 +477,8 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         tag: ${{ env.PRODUCT_NAME }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        repo: ${{ secrets.PPRIVATE }}
+        token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
         body: |
           打包时间:🕛 ${{ env.DATE }}      🤵 源码作者:[Immortalwrt](https://github.com/immortalwrt)      内核:[Myself](https://github.com/Tao173/compile-kernel)
           * ❌❌❌禁止❌❌❌使用❌❌❌
