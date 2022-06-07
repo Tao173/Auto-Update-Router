@@ -461,7 +461,7 @@ jobs:
         cd ${{ env.PACKAGED_OUTPUTPATH }}
         rename "s/openwrt/Lienol/" ./*${{ env.PRODUCT_NAME }}
         rename "s/openwrt/Lienol/" ./*.gz
-        mv sha256sums lienolsha256sums
+        mv sha256sums Lienolsha256sums
         
     - name: Upload openwrt to release
       uses: ncipollo/release-action@v1

@@ -1,0 +1,176 @@
+#===============================================
+# Description: Package And Backup
+# Lisence: MIT
+# Original Author: Tao173 
+#===============================================
+
+name: Package And Backup
+
+on:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH Connection To Actions?'
+        required: false
+        default: 'false'
+
+env:
+  UPLOAD_FIRMWARE: false
+  UPLOAD_RELEASE: true
+  TZ: Asia/Shanghai
+
+jobs:
+  Backuptocloud189:
+    runs-on: ubuntu-20.04
+    env:
+      REPO_URL: https://github.com/Lienol/openwrt
+      REPO_BRANCH: 21.02       
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        df -hT $PWD
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        cd openwrt
+        useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
+        Author=$(git show -s --date=short --format="Author: %an")
+        Date=$(git show -s --date=short --format="date: %cd")
+        Commit=$(git show -s --date=short --format="commit: %s")
+        Hash=$(git show -s --date=short --format="commit hash: %h")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+        echo "author=$Author" >> $GITHUB_ENV
+        echo "date=$Date" >> $GITHUB_ENV
+        echo "commit=$Commit" >> $GITHUB_ENV
+        echo "hash=$Hash" >> $GITHUB_ENV
+        echo "DATEA=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        echo "nametag=${{ github.event.inputs.upload }}" >> $GITHUB_ENV
+
+    - name: Release Downloader ARMv8_Plus_Myself
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "${{ secrets.MYPRIVATEREPOSITORIES }}"
+        out-file-path: "./Download"
+        token: "${{ secrets.ACTIONS_TRIGGER_PAT }}"        
+        tag: "ARMv8_Plus_Myself"
+        fileName: "*"
+
+    - name: Release Downloader ROOTFS_Plus_Myself
+      uses: robinraju/release-downloader@v1.3
+      with:
+        repository: "${{ secrets.MYPRIVATEREPOSITORIES }}"
+        out-file-path: "./Download"
+        token: "${{ secrets.ACTIONS_TRIGGER_PAT }}"
+        tag: "ROOTFS_Plus_Myself"
+        fileName: "*"
+
+    - name: Judje one
+      run: |   
+        echo 取消上传选择默认值上传Lienol版本
+
+#    - name: Select a version Lean
+#      if: (github.event.inputs.upload == 'lean' && github.event.inputs.upload != 'all') 
+#      run: |   
+#        cd ./Download
+#        ls -l |grep -v Lean | awk '{print $9}'  | xargs rm -fr
+#
+#    - name: Select a version Immortalwrt
+#      if: (github.event.inputs.upload == 'immortalwrt' && github.event.inputs.upload != 'all') 
+#      run: |   
+#        cd ./Download
+#        ls -l |grep -v immortalwrt | awk '{print $9}'  | xargs rm -fr
+#
+    - name: Select a version Lienol
+      run: |   
+        cd ./Download
+        ls -l |grep -v Lienol | awk '{print $9}'  | xargs rm -fr     
+
+    - name: Zip Firmware & Rootfs For Upload
+      id: zip
+      run: |
+        git clone https://github.com/Tao173/Auto-Update-Router ./Auto-Update-Router
+        tar -cjvf Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2 ./Auto-Update-Router
+        tar -cjvf OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 ./Download
+
+    - name: backup to cloud189-go
+      id: cloud189go
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/tickstep/cloudpan189-go/releases/download/$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )/cloudpan189-go-$( curl -s  https://api.github.com/repos/tickstep/cloudpan189-go/releases/latest | jq -r .name | cut -d " " -f 1 )-linux-amd64.zip -O cloudgo.zip
+        unzip -j cloudgo.zip
+        rm -rf README.md && rm -rf LICENSE
+        ./cloudpan189-go login -username=${{ secrets.NAME }} -password=${{ secrets.PASS }}
+        ./cloudpan189-go u Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt  | tee backgo1.log
+        ./cloudpan189-go u OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt  | tee backgo2.log
+        ./cloudpan189-go logout -y
+        echo "judgego1=$(grep -rl '失败' . --include=backgo1.log)" >> $GITHUB_ENV
+        echo "judgego2=$(grep -rl '失败' . --include=backgo2.log)" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
+
+    - name: backup to cloud189
+      if: steps.cloud189go.outputs.status != 'success' && !cancelled()
+      id: cloud189
+      timeout-minutes: 160
+      run: |
+        wget --no-check-certificate https://github.com/gowsp/cloud189/releases/download/$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | cut -d " " -f 1 )/cloud189_$( curl -s  https://api.github.com/repos/gowsp/cloud189/releases/latest | jq -r .name | wget -qO- -t1 -T2 "https://api.github.com/repos/gowsp/cloud189/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/v//g;s/ //g' )_linux_amd64.tar.gz -O cloud.tar.gz
+        tar -zxvf cloud.tar.gz
+        rm -rf README.md && rm -rf LICENSE
+        ./cloud189 login -i ${{ secrets.NAME }} ${{ secrets.PASS }}
+        ./cloud189 up Auto-Update-Router-$(date +%Y-%m-%d).tar.bz2  /我的备份/OpenWrt  | tee back1.log
+        ./cloud189 up OpenWrt-imgs-$(date +%Y-%m-%d)-${{ env.nametag }}.tar.bz2 /我的备份/OpenWrt  | tee back2.log
+        ./cloud189 logout -f
+        echo "judge1=$(grep -rl '失败' . --include=back1.log)" >> $GITHUB_ENV
+        echo "judge2=$(grep -rl '失败' . --include=back2.log)" >> $GITHUB_ENV        
+        echo "::set-output name=status::success"
+
+    - name: Judje one
+      id: judgeone
+      if: env.judgego1 == 'backgo1.log' || env.judge1 == 'back1.log'
+      run: |   
+        echo "::set-output name=status::success"
+    - name: Judje two
+      id: judgetwo
+      if: env.judgego2 == 'backgo2.log' || env.judge2 == 'back2.log'
+      run: |   
+        echo "::set-output name=status::success"
+
+    - name: Telegram notification
+      if: steps.judgeone.outputs.status == 'success'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          Auto-Update-Router上传天翼云盘完成。
+          编译时间：${{ env.DATE }}
+          更新信息：
+          作者: ${{ env.author }}
+          时间: ${{ env.date }}
+          内容: ${{ env.commit }}
+          hash: ${{ env.hash }}
+          以上信息来自Lean源码提交记录
+    - name: Telegram notification
+      if: steps.judgetwo.outputs.status == 'success'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          自用固件上传天翼云盘完成。
+          编译时间：${{ env.DATE }}
+          更新信息：
+          作者: ${{ env.author }}
+          时间: ${{ env.date }}
+          内容: ${{ env.commit }}
+          hash: ${{ env.hash }}
+          以上信息来自Lean源码提交记录
