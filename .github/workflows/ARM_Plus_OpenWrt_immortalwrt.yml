@@ -464,7 +464,7 @@ jobs:
       run: |
         sudo apt install rename
         cd  ${{ env.PACKAGED_OUTPUTPATH }}
-        rename "s/openwrt/immortalwrt/" ./*${{ env.PRODUCT_NAME }}
+        rename "s/openwrt/immortalwrt/" ./*.7z
         rename "s/openwrt/immortalwrt/" ./*.gz
         mv sha256sums immortalwrtsha256sums
 
