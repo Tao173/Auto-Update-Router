@@ -464,7 +464,7 @@ jobs:
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
         rename "s/openwrt/Lean/" ./*.gz
-        mv sha256sums leansha256sums
+        mv sha256sums Leansha256sums
 
     - name: Upload openwrt to release
       uses: ncipollo/release-action@v1
