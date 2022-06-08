@@ -459,7 +459,7 @@ jobs:
       run: |
         sudo apt install rename
         cd ${{ env.PACKAGED_OUTPUTPATH }}
-        rename "s/openwrt/Lienol/" ./*${{ env.PRODUCT_NAME }}
+        rename "s/openwrt/Lienol/" ./*${{ env.GZIP_IMGS }}
         rename "s/openwrt/Lienol/" ./*.gz
         mv sha256sums Lienolsha256sums
         
