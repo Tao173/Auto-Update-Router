@@ -7,6 +7,7 @@ name: Compile the kernel
 
 on:
   repository_dispatch:
+    types: [Build]
   workflow_dispatch:
     inputs:
       kernel_repo:
@@ -24,7 +25,7 @@ on:
       kernel_sign:
         description: "Set the kernel custom signature"
         required: false
-        default: "-ophub"
+        default: ""
       kernel_config:
         description: "Set the path of kernel .config"
         required: false
@@ -55,7 +56,7 @@ jobs:
           echo "COMPILE_STARTINGTIME=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
 
       - name: Compile the kernel for Amlogic s9xxx
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: Tao173/compile-kernel@main
         with:
           build_target: kernel
           kernel_repo: ${{ github.event.inputs.kernel_repo }}
@@ -71,6 +72,13 @@ jobs:
           tag: kernel_${{ env.PACKAGED_OUTPUTTAGS }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           body: |
             The kernel can be used to compile Armbian and OpenWrt.
+      - name: Telegram notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            内核打包完成。

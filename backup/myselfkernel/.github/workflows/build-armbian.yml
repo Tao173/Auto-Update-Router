@@ -6,13 +6,12 @@
 name: Build armbian
 
 on:
-  repository_dispatch:
   workflow_dispatch:
     inputs:
       set_branch:
-        description: "Branch: edge / current / legacy"
+        description: "Branch: current / edge"
         required: false
-        default: "edge"
+        default: "current"
       set_release:
         description: "Release: jammy / focal / bullseye"
         required: false
@@ -22,7 +21,7 @@ on:
         required: false
         default: "odroidn2"
       set_desktop:
-        description: "Build Desktop: no / gnome / xfce, etc."
+        description: "Build Desktop: no / xfce"
         required: false
         default: "no"
       armbian_soc:
@@ -74,7 +73,7 @@ jobs:
           sudo chown $USER:$GROUPS /workdir
           echo "COMPILE_STARTINGTIME=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
 
-          ARR_BRANCH=("edge" "current" "legacy")
+          ARR_BRANCH=("edge" "current")
           set_branch="${{ github.event.inputs.set_branch }}"
           if  [[ -z "${set_branch}" || -z "$(echo "${ARR_BRANCH[@]}" | grep -w "${set_branch}")" ]]; then
               set_branch="current"
@@ -88,10 +87,10 @@ jobs:
           fi
           echo "ARMBIAN_RELEASE=${set_release}" >> $GITHUB_ENV
 
-          ARR_BOARD=("lepotato" "odroidn2")
+          ARR_BOARD=("odroidn2" "lepotato")
           set_board="${{ github.event.inputs.set_board }}"
           if  [[ -z "${set_board}" || -z "$(echo "${ARR_BOARD[@]}" | grep -w "${set_board}")" ]]; then
-              set_board="lepotato"
+              set_board="odroidn2"
           fi
           echo "ARMBIAN_BOARD=${set_board}" >> $GITHUB_ENV
 
@@ -129,7 +128,7 @@ jobs:
           echo "::set-output name=status::success"
 
       - name: Rebuild Armbian for Amlogic s9xxx
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: Tao173/compile-kernel@main
         if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
           build_target: armbian
@@ -147,7 +146,7 @@ jobs:
           tag: Armbian_Aml_${{ env.ARMBIAN_RELEASE }}_${{ env.ARMBIAN_DESKTOP_OPT }}_${{ env.PACKAGED_OUTPUTDATE }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           body: |
             This is Armbian image for Amlogic s9xxx tv box
             * Firmware information

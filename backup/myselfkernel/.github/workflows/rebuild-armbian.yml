@@ -6,7 +6,6 @@
 name: Rebuild armbian
 
 on:
-  repository_dispatch:
   workflow_dispatch:
     inputs:
       armbian_url:
@@ -85,7 +84,7 @@ jobs:
           echo "ARMBIAN_RELEASE=${set_release}" >> $GITHUB_ENV
 
       - name: Rebuild Armbian for Amlogic s9xxx
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: Tao173/compile-kernel@main
         if: env.ARMBIAN_URL != '' && !cancelled()
         with:
           armbian_path: ${{ env.ARMBIAN_URL }}
@@ -101,7 +100,7 @@ jobs:
           tag: Armbian_Aml${{ env.ARMBIAN_RELEASE }}${{ env.PACKAGED_OUTPUTDATE }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           body: |
             This is Armbian image for Amlogic s9xxx tv box
             * Firmware information

@@ -6,7 +6,6 @@
 name: Delete older releases and artifacts
 
 on:
-  repository_dispatch:
   workflow_dispatch:
   #schedule:
     #- cron: "0 23 * * 0"
@@ -35,13 +34,13 @@ jobs:
           delete_tags: true
           delete_tag_pattern: _
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_TRIGGER_PAT }}
 
       - name: Delete older workflow runs and artifacts
         uses: Mattraks/delete-workflow-runs@main
         if: env.DELETE_ARTIFACTS == 'true'
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           repository: ${{ github.repository }}
           retain_days: ${{ env.KEEP_DAY }}
           keep_minimum_runs: ${{ env.KEEP_MININUM_RUNS }}
