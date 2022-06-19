@@ -1,11 +1,11 @@
 #========================================================================================================================
 # https://github.com/ophub/amlogic-s9xxx-openwrt
-# Description: Automatically Build OpenWrt for Amlogic s9xxx tv box
+# Description: Build OpenWrt with lede
 # Cron: min (0 - 59) / hour (0 - 23) / day of month (1 - 31) / month (1 - 12) / day of week (0 - 6)(Sunday - Saturday)
-# Source code repository: https://github.com/openwrt/openwrt / Branch: master
+# Source code repository: https://github.com/coolsnowwolf/lede / Branch: master
 #========================================================================================================================
 
-name: Build OpenWrt official
+name: Build OpenWrt with lede
 
 on:
   repository_dispatch:
@@ -59,12 +59,12 @@ on:
   #- cron: '0 17 * * 0'
 
 env:
-  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  FEEDS_CONF: router-config/openwrt-master/feeds.conf.default
-  CONFIG_FILE: router-config/openwrt-master/.config
-  DIY_P1_SH: router-config/openwrt-master/diy-part1.sh
-  DIY_P2_SH: router-config/openwrt-master/diy-part2.sh
+  FEEDS_CONF: router-config/lede-master/feeds.conf.default
+  CONFIG_FILE: router-config/lede-master/.config
+  DIY_P1_SH: router-config/lede-master/diy-part1.sh
+  DIY_P2_SH: router-config/lede-master/diy-part2.sh
   TZ: Asia/Shanghai
 
 jobs:
@@ -152,7 +152,7 @@ jobs:
         uses: ncipollo/release-action@main
         if: env.PACKAGED_STATUS == 'success' && !cancelled()
         with:
-          tag: openwrt_s9xxx_official_${{ env.PACKAGED_OUTPUTDATE }}
+          tag: openwrt_s9xxx_lede_${{ env.PACKAGED_OUTPUTDATE }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
           token: ${{ secrets.GH_TOKEN }}
