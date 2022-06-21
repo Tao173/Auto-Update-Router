@@ -137,7 +137,7 @@ jobs:
       run: |
         cp openwrt/.config build.config
         mkdir -p Packages
-        mv -rf openwrt/bin/packages/*/*/*.ipk Packages
+        mv -f openwrt/bin/packages/*/*/*.ipk Packages
         tar -zcvf Packages.tar.gz Packages
         mv *.config *.tar.gz openwrt/bin/targets/*/*
         cd openwrt/bin/targets/*/*
