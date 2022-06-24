@@ -26,10 +26,13 @@
 # software_remove   : Remove package
 # init_var          : Initialize variables
 #
-# software_11       : For docker
-# software_12       : For desktop
-# software_17       : For vlc-media-player
-# software_18       : For firefox
+# software_101      : For docker
+# software_102      : For portainer(docker)
+# software_103      : For transmission(docker)
+#
+# software_201      : For desktop
+# software_202      : For vlc-media-player(desktop)
+# software_203      : For firefox(desktop)
 #
 #========================== Set default parameters ==========================
 #
@@ -41,6 +44,7 @@ STEPS="[\033[95m STEPS \033[0m]"
 INFO="[\033[94m INFO \033[0m]"
 SUCCESS="[\033[92m SUCCESS \033[0m]"
 OPTIONS="[\033[93m OPTIONS \033[0m]"
+NOTE="[\033[93m NOTE \033[0m]"
 ERROR="[\033[91m ERROR \033[0m]"
 #
 #============================================================================
@@ -55,18 +59,16 @@ check_release() {
     if [[ -f "${ophub_release_file}" ]]; then
         source "${ophub_release_file}" 2>/dev/null
         VERSION_CODEID="${VERSION_CODEID}"
-        VERSION_CODENAME="${VERSION_CODENAME}"
-        SOC="${SOC}"
     else
         error_msg "${ophub_release_file} file is missing!"
     fi
 
-    [[ -n "${VERSION_CODEID}" && -n "${VERSION_CODENAME}" && -n "${SOC}" ]] || error_msg "${ophub_release_file} value is missing!"
+    [[ -n "${VERSION_CODEID}" ]] || error_msg "${ophub_release_file} value is missing!"
 }
 
 software_install() {
     install_list="${1}"
-    echo -e "${STEPS} Start updating packages: [ ${install_list} ]..."
+    echo -e "${STEPS} Start installing packages: [ ${install_list} ]..."
 
     # Install the package
     sudo apt-get update
@@ -154,6 +156,102 @@ software_102() {
         ;;
     remove)
         armbian-docker portainer_remove
+        ;;
+    *)
+        error_msg "Invalid input parameter: [ ${@} ]"
+        ;;
+    esac
+}
+
+# For transmission
+software_103() {
+    echo -e "${STEPS} Start executing the command..."
+    echo -e "${INFO} Software Name: [ transmission ]"
+    echo -e "${INFO} Software ID: [ ${software_id} ]"
+    echo -e "${INFO} Software Manage: [ ${software_manage} ]"
+
+    # Generate random account
+    random_account="$(cat /proc/sys/kernel/random/uuid)"
+    # transmission installation path
+    tr_path="/opt/docker/transmission"
+    tr_default_user="admin"
+    tr_default_pass="${random_account:0:18}"
+
+    case "${software_manage}" in
+    install)
+        echo -e "${STEPS} Start installing the docker image: [ transmission ]..."
+
+        # Check script permission
+        [[ "$(id -u)" == "0" ]] || error_msg "please run this script as root: [ sudo ${0} -s 103 -m install ]"
+
+        echo -ne "${OPTIONS} Set login username, the default is [ ${tr_default_user} ]: "
+        read tr_user
+        [[ -z "${tr_user}" ]] && tr_user="${tr_default_user}"
+        echo -e "${INFO} Login username: [ ${tr_user} ]"
+
+        echo -ne "${OPTIONS} Set login password, the default is [ ${tr_default_pass} ]: "
+        read tr_pass
+        [[ -z "${tr_pass}" ]] && tr_pass="${tr_default_pass}"
+        echo -e "${INFO} Login password: [ ${tr_pass} ]"
+
+        # Instructions: https://github.com/linuxserver/docker-transmission
+        echo -e "${STEPS} Start pulling the docker image: [ linuxserver/transmission:arm64v8-latest ]..."
+        docker run -d --name=transmission \
+            -e PUID=1000 \
+            -e PGID=1000 \
+            -e TZ=Asia/Shanghai \
+            -e TRANSMISSION_WEB_HOME=/transmission-web-control/ \
+            -e USER=${tr_user} \
+            -e PASS=${tr_pass} \
+            -p 9091:9091 \
+            -p 51413:51413 \
+            -p 51413:51413/udp \
+            -v ${tr_path}/config:/config \
+            -v ${tr_path}/downloads:/downloads \
+            -v ${tr_path}/watch/folder:/watch \
+            --restart unless-stopped \
+            linuxserver/transmission:arm64v8-latest
+
+        # Set the transmission-web-control
+        echo -e "${STEPS} Start the installation interface: [ transmission-web-control ]..."
+        tr_cn_url="https://github.com/ronggang/transmission-web-control/raw/master/release/install-tr-control-cn.sh"
+        bash <(curl -fsSL ${tr_cn_url}) ${tr_path}
+
+        sync && sleep 3
+        echo -e "${NOTE} The transmission address [ http://ip:9091 ]"
+        echo -e "${NOTE} The transmission account [ username:${tr_user}  /  password:${tr_pass} ]"
+        echo -e "${SUCCESS} Transmission installed successfully."
+        exit 0
+        ;;
+    update)
+        # update transmission docker image
+        echo -e "${STEPS} Start updating the transmission docker image..."
+        docker pull linuxserver/transmission:arm64v8-latest
+
+        # Set the transmission-web-control
+        echo -e "${STEPS} Start updating the interface: [ transmission-web-control ]..."
+        tr_cn_url="https://github.com/ronggang/transmission-web-control/raw/master/release/install-tr-control-cn.sh"
+        bash <(curl -fsSL ${tr_cn_url}) ${tr_path}
+
+        # Set the transmission-web-control
+        echo -e "${STEPS} Restart the transmission docker container..."
+        docker restart $(docker ps -aq --filter name=transmission)
+        ;;
+    remove)
+        # Query the container ID based on the image name and delete it
+        echo -e "${INFO} Start removing transmission container..."
+        docker stop $(docker ps -aq --filter name=transmission)
+        docker rm $(docker ps -aq --filter name=transmission)
+
+        # Query the image ID based on the image name and delete it
+        echo -e "${INFO} Start removing transmission image..."
+        docker image rm $(docker images -q --filter reference=linuxserver/transmission*:*)
+
+        # Delete the Transmission installation directory
+        [[ -d "${tr_path}" ]] && rm -rf ${tr_path}
+
+        echo -e "${SUCCESS} Transmission removed successfully."
+        exit 0
         ;;
     *)
         error_msg "Invalid input parameter: [ ${@} ]"
