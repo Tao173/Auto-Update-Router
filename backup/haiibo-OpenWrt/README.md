@@ -68,7 +68,6 @@
 　├── 系统进程<br/>
 　├── 实时信息<br/>
 　├── 实时监控<br/>
-　├── WireGuard 状态<br/>
 　├── 负载均衡<br/>
 　└── 释放内存
 </details>
@@ -90,7 +89,7 @@
 　├── 定时重启<br/>
 　├── 文件传输<br/>
 　├── Argon 主题设置<br/>
-　├── 重启<br/>
+　└── 重启<br/>
 　└── 关机
 </details>
 <details>
@@ -102,9 +101,8 @@
 　├── Bypass<br/>
 　├── DNS 过滤器<br/>
 　├── 广告屏蔽大师 Plus+<br/>
-　├── 阿里云盘 FUSE<br/>
-　├── 阿里云盘 WebDAV<br/>
 　├── AdGuard Home<br/>
+　├── 京东签到服务<br/>
 　├── ShadowSocksR Plus+<br/>
 　├── DDNS.to内网穿透<br/>
 　├── 易友云文件管理器<br/>
@@ -142,24 +140,21 @@
 </details>
 <details>
 <summary><b>├── 网络存储</b></summary>
-　├── 文件浏览器<br/>
 　├── 可道云<br/>
 　├── NFS 管理<br/>
 　├── 微力同步<br/>
+　├── 阿里云盘 WebDAV<br/>
 　├── qBittorrent<br/>
 　├── USB 打印服务器<br/>
 　├── 硬盘休眠<br/>
-　├── aMule设置<br/>
 　├── 挂载 SMB 网络共享<br/>
-　├── PCHIFI 数字转盘遥控<br/>
-　├── MJPG-streamer<br/>
 　├── 网络共享<br/>
 　├── FTP 服务器<br/>
 　├── Rclone<br/>
 　├── Aria2 配置<br/>
 　├── miniDLNA<br/>
 　├── Transmission<br/>
-　└── BaiduPCS Web
+　└── BaiduPCS Web<br/>
 </details>
 <details>
 <summary><b>├── VPN</b></summary>
@@ -276,8 +271,8 @@
 | [ImmortalWrt](https://github.com/immortalwrt) | [coolsnowwolf](https://github.com/coolsnowwolf) | [P3TERX](https://github.com/P3TERX) | [Flippy](https://github.com/unifreq) |
 | :-------------: | :-------------: | :-------------: | :-------------: |
 | <img width="100" src="https://avatars.githubusercontent.com/u/53193414"/> | <img width="100" src="https://avatars.githubusercontent.com/u/31687149"/> | <img width="100" src="https://avatars.githubusercontent.com/u/25927179"/> | <img width="100" src="https://avatars.githubusercontent.com/u/39355261"/> |
-| [Ophub](https://github.com/ophub) | [Breakings](https://github.com/breakings) | [QiuSimons](https://github.com/QiuSimons) | [IvanSolis1989](https://github.com/IvanSolis1989) |
-| <img width="100" src="https://avatars.githubusercontent.com/u/68696949"/> | <img width="100" src="https://avatars.githubusercontent.com/u/25475074"/> | <img width="100" src="https://avatars.githubusercontent.com/u/45143996"/> | <img width="100" src="https://avatars.githubusercontent.com/u/44228691"/> |
+| [Ophub](https://github.com/ophub) | [Jerrykuku](https://github.com/jerrykuku) | [QiuSimons](https://github.com/QiuSimons) | [IvanSolis1989](https://github.com/IvanSolis1989) |
+| <img width="100" src="https://avatars.githubusercontent.com/u/68696949"/> | <img width="100" src="https://avatars.githubusercontent.com/u/9485680"/> | <img width="100" src="https://avatars.githubusercontent.com/u/45143996"/> | <img width="100" src="https://avatars.githubusercontent.com/u/44228691"/> |
 
 
 <a href="#readme">
