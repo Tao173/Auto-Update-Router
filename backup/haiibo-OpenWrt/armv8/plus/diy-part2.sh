@@ -21,7 +21,6 @@ sed -i 's/services/system/g' feeds/luci/applications/luci-app-cpufreq/luasrc/con
 rm -rf feeds/packages/net/mosdns
 rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/luci/themes/luci-theme-netgear
-rm -rf feeds/luci/applications/luci-app-socat
 rm -rf feeds/luci/applications/luci-app-netdata
 rm -rf feeds/luci/applications/luci-app-wrtbwmon
 rm -rf feeds/luci/applications/luci-app-dockerman
@@ -35,7 +34,6 @@ git clone https://github.com/iwrt/luci-app-ikoolproxy.git package/luci-app-ikool
 git clone https://github.com/esirplayground/luci-app-poweroff package/luci-app-poweroff
 git clone https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter
 git clone https://github.com/kiddin9/luci-app-dnsfilter package/luci-app-dnsfilter
-svn co https://github.com/haiibo/packages/trunk/luci-app-advanced package/luci-app-advanced
 svn co https://github.com/kiddin9/openwrt-packages/trunk/luci-app-eqos package/luci-app-eqos
 svn co https://github.com/kiddin9/openwrt-bypass/trunk/luci-app-bypass package/luci-app-bypass
 svn co https://github.com/Lienol/openwrt-package/trunk/luci-app-filebrowser package/luci-app-filebrowser
