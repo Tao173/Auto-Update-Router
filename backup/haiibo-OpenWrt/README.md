@@ -103,14 +103,12 @@
 　├── AdGuard Home<br/>
 　├── ShadowSocksR Plus+<br/>
 　├── DDNS.to内网穿透<br/>
-　├── MosDNS<br/>
 　├── 微信推送<br/>
 　├── 上网时间控制<br/>
 　├── 全能推送<br/>
 　├── OpenClash<br/>
 　├── 解锁网易云灰色歌曲<br/>
 　├── 动态 DNS<br/>
-　├── WatchCat<br/>
 　├── SmartDNS<br/>
 　├── 迅雷快鸟<br/>
 　├── 网络唤醒<br/>
