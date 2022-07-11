@@ -19,23 +19,10 @@ on:
         options:
           - lede
           - official
-      docker_user:
-        description: "Set the docker username"
+      docker_img:
+        description: "Set the docker image"
         required: false
-        default: "ophub"
-      docker_app:
-        description: "Set the docker app name"
-        required: false
-        default: "openwrt-aarch64"
-      docker_tag:
-        description: "Select the docker image tag"
-        required: false
-        default: "latest"
-        type: choice
-        options:
-          - latest
-          - linux-arm64
-          - arm64v8-latest
+        default: "ophub/openwrt-aarch64:latest"
 
 jobs:
   build:
@@ -50,14 +37,6 @@ jobs:
         id: down
         if: (!cancelled())
         run: |
-          # Get input parameters
-          openwrt_file="${{ github.event.inputs.openwrt_file }}"
-          docker_user="${{ github.event.inputs.docker_user }}"
-          docker_app="${{ github.event.inputs.docker_app }}"
-          docker_tag="${{ github.event.inputs.docker_tag }}"
-          docker_out="${docker_user}/${docker_app}:${docker_tag}"
-          echo "DOCKER_OUT=${docker_out}" >> $GITHUB_ENV
-
           # Get OpenWrt file
           openwrt_url="$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases" | grep -o "openwrt_s9xxx_${openwrt_file}.*/.*rootfs.tar.gz" | head -n 1)"
           [[ -z "${openwrt_url}" ]] && echo -e "OpenWrt file not found." && exit 1
@@ -99,5 +78,5 @@ jobs:
         with:
           context: docker_image/
           push: true
-          tags: ${{ env.DOCKER_OUT }}
+          tags: "${{ github.event.inputs.docker_img }}"
           platforms: linux/arm64
