@@ -24,6 +24,9 @@ on:
         required: false
         default: "ophub/openwrt-aarch64:latest"
 
+env:
+  DOCKER_OUTPATH: out
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -38,19 +41,20 @@ jobs:
         if: (!cancelled())
         run: |
           # Get OpenWrt file
+          openwrt_file="${{ github.event.inputs.openwrt_file }}"
           openwrt_url="$(curl -s "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases" | grep -o "openwrt_s9xxx_${openwrt_file}.*/.*rootfs.tar.gz" | head -n 1)"
           [[ -z "${openwrt_url}" ]] && echo -e "OpenWrt file not found." && exit 1
-          rm -rf docker_image && mkdir -p docker_image
-          wget -q "https://github.com/${GITHUB_REPOSITORY}/releases/download/${openwrt_url}" -O docker_image/openwrt-armvirt-64-default-rootfs.tar.gz
+          rm -rf ${{ env.DOCKER_OUTPATH }} 2>/dev/null && mkdir -p ${{ env.DOCKER_OUTPATH }}
+          wget -q "https://github.com/${GITHUB_REPOSITORY}/releases/download/${openwrt_url}" -O ${{ env.DOCKER_OUTPATH }}/openwrt-armvirt-64-default-rootfs.tar.gz
 
           # Generate Dockerfile
-          echo 'FROM scratch' >docker_image/Dockerfile
-          echo 'ADD openwrt-armvirt-64-default-rootfs.tar.gz /' >>docker_image/Dockerfile
-          echo 'EXPOSE 22 53 80 443 7681' >>docker_image/Dockerfile
-          echo 'ENTRYPOINT ["/sbin/init"]' >>docker_image/Dockerfile
-          sync
+          docker_envfile="${{ env.DOCKER_OUTPATH }}/Dockerfile"
+          echo 'FROM scratch' >${docker_envfile}
+          echo 'ADD openwrt-armvirt-64-default-rootfs.tar.gz /' >>${docker_envfile}
+          echo 'EXPOSE 22 53 80 443 7681' >>${docker_envfile}
+          echo 'ENTRYPOINT ["/sbin/init"]' >>${docker_envfile}
 
-          echo -e "Current docker_image directory status: \n$(ls docker_image -l)"
+          sync && echo -e "Current ${{ env.DOCKER_OUTPATH }} directory status: \n$(ls ${{ env.DOCKER_OUTPATH }} -l)"
           echo "::set-output name=status::success"
 
       - name: Set up QEMU
@@ -76,7 +80,7 @@ jobs:
         if: (!cancelled())
         uses: docker/build-push-action@v3
         with:
-          context: docker_image/
           push: true
-          tags: "${{ github.event.inputs.docker_img }}"
           platforms: linux/arm64
+          context: ${{ env.DOCKER_OUTPATH }}
+          tags: "${{ github.event.inputs.docker_img }}"
