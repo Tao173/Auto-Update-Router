@@ -869,8 +869,8 @@ software_201() {
         echo -ne "${OPTIONS} Please input the login desktop system user(non-root): "
         read get_desktop_user
         if [[ -n "${get_desktop_user}" ]]; then
-            sudo adduser ${my_user}
-            sudo usermod -aG sudo ${my_user}
+            sudo adduser ${get_desktop_user}
+            sudo usermod -aG sudo ${get_desktop_user}
         else
             echo -e "${NOTE} You skipped adding the logged in desktop system user."
         fi
