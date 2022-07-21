@@ -25,7 +25,6 @@ rm -rf feeds/luci/applications/luci-app-qbittorrent
 rm -rf feeds/luci/applications/luci-app-smartdns 
 
 # 添加额外软件包
-git clone https://github.com/kongfl888/luci-app-adguardhome.git package/luci-app-adguardhome
 git clone https://github.com/jerrykuku/lua-maxminddb.git package/lua-maxminddb
 git clone https://github.com/jerrykuku/luci-app-vssr.git package/luci-app-vssr
 git clone https://github.com/tty228/luci-app-serverchan.git package/luci-app-serverchan
@@ -40,9 +39,9 @@ git clone https://github.com/big-tooth/luci-app-socatg package/luci-app-socatg
 svn co https://github.com/haiibo/packages/trunk/luci-app-advanced package/luci-app-advanced
 svn co https://github.com/kiddin9/openwrt-packages/trunk/luci-app-eqos package/luci-app-eqos
 svn co https://github.com/kiddin9/openwrt-bypass/trunk/luci-app-bypass package/luci-app-bypass
-svn co https://github.com/Lienol/openwrt-package/trunk/luci-app-filebrowser package/luci-app-filebrowser
-svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
-svn co https://github.com/sirpdboy/sirpdboy-package/trunk/luci-app-netdata package/luci-app-netdata
+# svn co https://github.com/Lienol/openwrt-package/trunk/luci-app-filebrowser package/luci-app-filebrowser
+# svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
+# svn co https://github.com/sirpdboy/sirpdboy-package/trunk/luci-app-netdata package/luci-app-netdata
 # svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
 svn co https://github.com/doushang/luci-app-shortcutmenu/trunk/luci-app-shortcutmenu package/luci-app-shortcutmenu
 svn co https://github.com/Ermyderis/mqttcleint/trunk/mqttapp package/mqttapp
@@ -61,7 +60,7 @@ svn co https://github.com/xiaorouji/openwrt-passwall/trunk/trojan-go package/tro
 svn co https://github.com/xiaorouji/openwrt-passwall/trunk/trojan-plus package/trojan-plus
 svn co https://github.com/xiaorouji/openwrt-passwall/branches/luci/luci-app-passwall package/luci-app-passwall
 svn co https://github.com/xiaorouji/openwrt-passwall2/trunk/luci-app-passwall2 package/luci-app-passwall2
-svn co https://github.com/xiaorouji/openwrt-passwall/trunk/xray-core package/xray-core
+# svn co https://github.com/xiaorouji/openwrt-passwall/trunk/xray-core package/xray-core
 svn co https://github.com/xiaorouji/openwrt-passwall/trunk/xray-plugin package/xray-plugin
 svn co https://github.com/xiaorouji/openwrt-passwall/trunk/ssocks package/ssocks
 svn co https://github.com/xiaorouji/openwrt-passwall/trunk/hysteria package/hysteria
