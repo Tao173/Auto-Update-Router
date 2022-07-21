@@ -105,9 +105,8 @@ sed -i "/(<%= ver.luciversion %>)<\/a> \//d" package/luci-theme-argon/luasrc/vie
 sed -i "s| + (luciversion \|\| '')||g" feeds/luci/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 #状态系统增加个性信息
 sed -i "s/exit 0//" package/default-settings/files/zzz-default-settings
-echo "sed -i '/CPU usage/a\<tr><td width=\"33%\">关于</td><td><a class=\"author-website\" href=\"https://NOMCAI.ML\">菜菜的壁纸库</a>&nbsp;&nbsp;&nbsp;<a class=\"author-blog\" href=\"https://github.com/Joecaicai/Actions-OpenWrt-AX6.git\">固件编译源地址</a>&nbsp;&nbsp;&nbsp;<a class=\"author-blog\" href=\"https://space.bilibili.com/15669979\">菜菜的哔哩哔哩</a></td></tr>' /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
 #简化版关于作者
-echo "sed -i '/CPU usage/a\<tr><td width=\"33%\">关于</td><td><a class=\"author-website\" href=\"https://NOMCAI.ML\">菜菜的壁纸库</a></td></tr>' /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
+echo "sed -i '/CPU usage/a\<tr><td width=\"33%\">关于</td><td><a class=\"author-blog\" href=\"https://myxiaochuang.gitee.io\">作者博客</a>&nbsp;&nbsp;&nbsp;<a class=\"author-blog\" href=\"https://github.com/XXKDB/MI-R4A-breed-openwrt\">编译源地址</a>&nbsp;&nbsp;&nbsp;<a class=\"author-blog\" href=\"https://space.bilibili.com/359789531\">哔哩哔哩</a></td></tr>' /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
 echo "sed -i '/关于/a\<tr><td width=\"33%\">天气</td><td><iframe width=\"640\" scrolling=\"no\" height=\"75\" frameborder=\"0\" allowtransparency=\"true\" src=\"https://i.tianqi.com?c=code&id=39&color=%23FF7600&icon=3&num=2&site=12\"></iframe></td></tr>' /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
 echo "sed -i '/天气/a\<tr><td width=\"33%\"> </td><td class=\"container\" style=\"height:200px;\"><canvas class=\"illo\" width=\"640\" height=\"640\" style=\"max-width: 200px; max-height: 200px; touch-action: none; width: 640px; height: 640px;\"></canvas></td></tr>' /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
 #动漫旋转双人组
@@ -115,10 +114,10 @@ echo "echo '<script src=\"https://cdn.jsdelivr.net/gh/XXKDB/img_cdn/js/twopeople
 echo "echo '<script src=\"https://cdn.jsdelivr.net/gh/XXKDB/img_cdn/js/zdog.dist.js\"></script>' >> /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
 echo "echo '<script id=\"rendered-js\" src=\"https://cdn.jsdelivr.net/gh/XXKDB/img_cdn/js/pen.js\"></script>' >> /usr/lib/lua/luci/view/admin_status/index.htm" >> package/default-settings/files/zzz-default-settings
 echo "echo '<script src=\"https://cdn.jsdelivr.net/gh/XXKDB/img_cdn/js/ginkgo-leaf.js\"></script>' >> /usr/lib/lua/luci/view/footer.htm" >> package/default-settings/files/zzz-default-settings
-#嵌入看板娘
-echo "echo '<script src=\"https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js\"></script>' >> /usr/lib/lua/luci/view/footer.htm" >> package/default-settings/files/zzz-default-settings
-echo "echo '<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css\"/>' >> /usr/lib/lua/luci/view/footer.htm" >> package/default-settings/files/zzz-default-settings
-echo "echo '<script src=\"https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js\"></script>' >> /usr/lib/lua/luci/view/footer.htm" >> package/default-settings/files/zzz-default-settings
+
+# 嵌入看板娘
+echo "echo '<script src=\"https://cdn.jsdelivr.net/gh/XXKDB/live2d-mini/autoload.js\"></script>' >> /usr/lib/lua/luci/view/footer.htm" >> package/default-settings/files/zzz-default-settings
+
 echo "" >> package/default-settings/files/zzz-default-settings
 echo "" >> package/default-settings/files/zzz-default-settings
 echo "exit 0" >> package/default-settings/files/zzz-default-settings
