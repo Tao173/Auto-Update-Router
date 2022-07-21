@@ -36,7 +36,7 @@ git clone https://github.com/pymumu/luci-app-smartdns package/luci-app-smartdns
 git clone https://github.com/TorBoxCode/luci-app-eqos package/luci-app-eqos
 git clone https://github.com/big-tooth/luci-app-socatg package/luci-app-socatg
 svn co https://github.com/destan19/OpenAppFilter/trunk/oaf package/oaf
-svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
+# svn co https://github.com/lisaac/luci-app-dockerman/trunk/applications/luci-app-dockerman package/luci-app-dockerman
 svn co https://github.com/doushang/luci-app-shortcutmenu/trunk/luci-app-shortcutmenu package/luci-app-shortcutmenu
 svn co https://github.com/Ermyderis/mqttcleint/trunk/mqttapp package/mqttapp
 svn co https://github.com/Ermyderis/mqttcleint/trunk/luci_mqtt package/luci_mqtt
@@ -47,9 +47,9 @@ pushd package/luci-app-openclash/tools/po2lmo
 make && sudo make install
 popd
 # 花生壳内网穿透
-svn export https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/luci-app-phtunnel package/new/luci-app-phtunnel
-svn export https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/phtunnel package/new/phtunnel
-svn export https://github.com/QiuSimons/dragino2-teasiu/trunk/package/teasiu/luci-app-oray package/new/luci-app-oray
+svn export https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/luci-app-phtunnel package/luci-app-phtunnel
+svn export https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/phtunnel package/phtunnel
+svn export https://github.com/QiuSimons/dragino2-teasiu/trunk/package/teasiu/luci-app-oray package/luci-app-oray
 # 增加shortcutmenu默认配置
 #curl -fsSL  https://github.com/Tao173/Auto-Update-Router/blob/master/DIY/files/etc/config/shortcutmenu > ./package/luci-app-shortcutmenu/root/etc/config/shortcutmenu
 
@@ -105,6 +105,9 @@ svn co https://github.com/linkease/nas-packages-luci/trunk/luci/luci-app-linkeas
 svn co https://github.com/linkease/nas-packages/trunk/network/services/linkease package/linkease
 svn co https://github.com/linkease/istore-ui/trunk/app-store-ui package/app-store-ui
 svn co https://github.com/linkease/istore/trunk/luci/luci-app-store package/luci-app-store
+svn co https://github.com/linkease/istore/trunk/luci/luci-lib-taskd package/luci-lib-taskd
+svn co https://github.com/linkease/istore/trunk/luci/luci-lib-xterm package/luci-lib-xterm
+svn co https://github.com/linkease/istore/trunk/luci/taskd package/taskd
 sed -i 's/luci-lib-ipkg/luci-base/g' package/luci-app-store/Makefile
 
 #airplay2&#打印机服务
