@@ -26,9 +26,8 @@ rm -rf feeds/luci/applications/luci-app-smartdns
 
 #L大插件支持库
 git clone --recursive https://github.com/op4packages/myPackages.git package/myPackages
-rm -rf package/myPackages/luci-app-dockerman
-rm -rf package/myPackages/luci-app-diskman
-rm -rf package/myPackages/UnblockNeteaseMusic
+rm -rf package/myPackages/luci*
+
 # 添加额外软件包
 git clone https://github.com/jerrykuku/lua-maxminddb.git package/lua-maxminddb
 git clone https://github.com/jerrykuku/luci-app-vssr.git package/luci-app-vssr
