@@ -25,7 +25,7 @@ env:
   UPLOAD_FIRMWARE: false
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  FILE_NAME: X86_64_OFFICIAL
+  FILE_NAME: X86_64_Lienol
 
 jobs:
   build:
