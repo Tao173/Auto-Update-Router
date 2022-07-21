@@ -46,7 +46,10 @@ svn co https://github.com/vernesong/OpenClash/trunk/luci-app-openclash package/l
 pushd package/luci-app-openclash/tools/po2lmo
 make && sudo make install
 popd
-
+# 花生壳内网穿透
+svn export https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/luci-app-phtunnel package/new/luci-app-phtunnel
+svn export https://github.com/teasiu/dragino2/trunk/devices/common/diy/package/teasiu/phtunnel package/new/phtunnel
+svn export https://github.com/QiuSimons/dragino2-teasiu/trunk/package/teasiu/luci-app-oray package/new/luci-app-oray
 # 增加shortcutmenu默认配置
 #curl -fsSL  https://github.com/Tao173/Auto-Update-Router/blob/master/DIY/files/etc/config/shortcutmenu > ./package/luci-app-shortcutmenu/root/etc/config/shortcutmenu
 
