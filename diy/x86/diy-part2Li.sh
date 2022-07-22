@@ -10,6 +10,10 @@
 # 修改默认IP
 #sed -i 's/192.168.124.1/192.168.1.1/g' package/base-files/files/bin/config_generate
 
+#尝试修复python-cryptography错误
+rm -rf feeds/packages/lang/python/python-cryptography
+svn co https://github.com/Lienol/openwrt-packages/trunk/lang/python/python-cryptography feeds/packages/lang/python/python-cryptography
+
 #2.设置ttyd免帐号登录
 sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
 # Hostname
