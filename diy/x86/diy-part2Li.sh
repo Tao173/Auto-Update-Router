@@ -12,7 +12,7 @@
 
 #尝试修复python-cryptography错误
 rm -rf feeds/packages/lang/python/python-cryptography
-svn co https://github.com/Lienol/openwrt-packages/trunk/lang/python/python-cryptography feeds/packages/lang/python/python-cryptography
+svn co https://github.com/openwrt/packages/trunk/lang/python/python-cryptography openwrt/feeds/packages/lang/python/python-cryptography
 
 #2.设置ttyd免帐号登录
 sed -i 's/\/bin\/login/\/bin\/login -f root/' feeds/packages/utils/ttyd/files/ttyd.config
